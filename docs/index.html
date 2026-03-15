@@ -1,745 +1,2533 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fanatics Media Mix Modeling Calculator</title>
+    <title>Fanatics MMM Strategy Cockpit</title>
     <style>
+        @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
+
         :root {
-            /* UPDATED BRAND COLORS */
-            --fanatics-navy: #051C2C;
-            --fanatics-red: #F4333D;
-            --bg-primary: #F5F7FA;
-            --bg-secondary: #FFFFFF;
-            --text-primary: #111827;
-            --text-secondary: #4B5563;
-            --border-color: rgba(5, 28, 44, 0.12);
+            --navy-950: #051824;
+            --navy-900: #0a2233;
+            --navy-800: #14354f;
+            --navy-700: #24516e;
+            --red-500: #f4333d;
+            --red-400: #ff626a;
+            --sand-100: #f7f3ef;
+            --sand-200: #efe7de;
+            --mint-200: #d6fff3;
+            --mint-500: #18c58c;
+            --amber-400: #ffbf47;
+            --slate-100: #edf2f7;
+            --slate-200: #d8e0e8;
+            --slate-400: #7e8fa1;
+            --slate-600: #526477;
+            --white: #ffffff;
+            --shadow-lg: 0 24px 60px rgba(5, 24, 36, 0.16);
+            --shadow-md: 0 14px 32px rgba(5, 24, 36, 0.1);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
         }
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #E5EDF4 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI Variable", sans-serif;
+            color: var(--navy-950);
+            background:
+                radial-gradient(circle at top left, rgba(244, 51, 61, 0.16), transparent 28%),
+                radial-gradient(circle at top right, rgba(36, 81, 110, 0.18), transparent 22%),
+                linear-gradient(180deg, #fffdfb 0%, #f4efe8 52%, #eef3f7 100%);
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(10, 34, 51, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 34, 51, 0.03) 1px, transparent 1px);
+            background-size: 36px 36px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 92%);
         }
 
-        .header {
-            background: var(--fanatics-navy);
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(5, 28, 44, 0.35);
-            margin-bottom: 30px;
+        .page {
+            width: min(1440px, calc(100% - 32px));
+            margin: 24px auto 48px;
         }
 
-        .header-content {
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 36px;
+            border-radius: 32px;
+            background:
+                radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.16), transparent 18%),
+                linear-gradient(140deg, rgba(5, 24, 36, 0.96), rgba(18, 53, 79, 0.95) 58%, rgba(244, 51, 61, 0.92));
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -110px;
+            top: -90px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: var(--mint-500);
+            box-shadow: 0 0 0 6px rgba(24, 197, 140, 0.16);
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.95fr);
+            gap: 28px;
+            margin-top: 20px;
+        }
+
+        .hero-topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
             flex-wrap: wrap;
-            gap: 20px;
         }
 
-        .logo-section {
-            display: flex;
+        .fanatics-lockup {
+            display: inline-flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
         }
 
-        /* REPLACED OLD LOGO BLOCK */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-mark {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--fanatics-navy);
+        .fanatics-mark {
             position: relative;
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
             overflow: hidden;
         }
 
-        /* Simple abstract "F" mark nod to Fanatics without using the exact asset */
-        .logo-mark::before,
-        .logo-mark::after {
-            content: '';
+        .fanatics-mark::before,
+        .fanatics-mark::after {
+            content: "";
             position: absolute;
-            left: 4px;
-            right: 4px;
-            height: 10px;
-            background: var(--fanatics-red);
-            border-radius: 12px;
+            left: 10px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--red-500), #ff8288);
         }
 
-        .logo-mark::before {
-            top: 7px;
+        .fanatics-mark::before {
+            top: 11px;
+            width: 34px;
+            height: 11px;
         }
 
-        .logo-mark::after {
-            top: 20px;
-            width: 70%;
+        .fanatics-mark::after {
+            top: 25px;
+            width: 24px;
+            height: 11px;
         }
 
-        .logo-text {
-            font-weight: 800;
-            font-size: 26px;
-            letter-spacing: -0.6px;
+        .fanatics-mark i {
+            position: absolute;
+            inset: 8px 14px 8px auto;
+            width: 11px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            transform: skew(-14deg);
         }
 
-        .logo-text span {
-            color: #FFFFFF;
+        .fanatics-wordmark strong,
+        .fanatics-wordmark span {
+            display: block;
         }
 
-        .header-title h1 {
-            font-size: 26px;
-            font-weight: 700;
+        .fanatics-wordmark strong {
+            font-size: 24px;
+            letter-spacing: -0.04em;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .fanatics-wordmark span {
+            margin-top: 2px;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
             margin: 0;
-            letter-spacing: -0.4px;
+            font-family: "Space Grotesk", "Avenir Next Condensed", sans-serif;
+            letter-spacing: -0.03em;
         }
 
-        .header-title p {
-            margin: 8px 0 0 0;
-            opacity: 0.96;
-            font-size: 14px;
+        .hero-copy h1 {
+            font-size: clamp(38px, 5vw, 62px);
+            line-height: 0.98;
+            margin-top: 14px;
+            max-width: 10.5ch;
         }
 
-        .beta-badge {
-            background: var(--fanatics-red);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .hero-copy p {
+            margin: 18px 0 0;
+            max-width: 720px;
+            color: rgba(255, 255, 255, 0.84);
+            font-size: 17px;
+            line-height: 1.65;
         }
 
-        .intro-section {
-            background: var(--bg-secondary);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .intro-section h2 {
-            color: var(--fanatics-navy);
-            font-size: 20px;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .intro-section p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.7;
-            margin-bottom: 12px;
-        }
-
-        .intro-section ul {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.8;
-            padding-left: 20px;
-            margin: 12px 0;
-        }
-
-        .intro-section li {
-            margin-bottom: 8px;
-        }
-
-        .calculator-grid {
+        .hero-bullets {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 26px;
         }
 
-        .input-card {
-            background: var(--bg-secondary);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: all 0.3s ease;
+        .hero-bullet {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
-        .input-card:hover {
-            box-shadow: 0 4px 16px rgba(5, 28, 44, 0.18);
-            border-color: var(--fanatics-red);
+        .hero-bullet strong {
+            display: block;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 255, 255, 0.74);
+            margin-bottom: 6px;
         }
 
-        .input-card h3 {
-            color: var(--fanatics-navy);
-            font-size: 16px;
-            font-weight: 700;
+        .hero-bullet span {
+            font-size: 15px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        .hero-panel {
+            align-self: end;
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-panel h2 {
+            font-size: 19px;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .channel-icon {
-            width: 20px;
-            height: 20px;
-            background: var(--fanatics-red);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .input-description {
-            color: var(--text-secondary);
-            font-size: 12px;
-            margin-bottom: 15px;
+        .hero-panel p {
+            margin: 0;
+            font-size: 14px;
             line-height: 1.6;
+            color: rgba(255, 255, 255, 0.78);
         }
 
-        .form-group {
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .hero-metric {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .hero-metric strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .hero-metric span {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.55fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .panel,
+        .results-shell {
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid rgba(20, 53, 79, 0.08);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(14px);
+        }
+
+        .panel {
+            padding: 24px;
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title h2 {
+            font-size: 26px;
+        }
+
+        .section-title p {
+            margin: 0;
+            color: var(--slate-600);
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .preset-strip {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
             margin-bottom: 18px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--text-primary);
-        }
-
-        input[type="number"] {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.2s ease;
-            background: var(--bg-primary);
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--fanatics-red);
-            background: white;
-        }
-
-        .btn-calculate {
-            width: 100%;
-            padding: 16px;
-            background: var(--fanatics-navy);
-            color: white;
+        .preset-btn,
+        .ghost-btn,
+        .solid-btn {
+            appearance: none;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
+            font: inherit;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(5, 28, 44, 0.35);
-            letter-spacing: 0.3px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
         }
 
-        .btn-calculate:hover {
-            background: #082744;
-            box-shadow: 0 6px 18px rgba(5, 28, 44, 0.45);
+        .preset-btn {
+            padding: 14px 14px 15px;
+            border-radius: 18px;
+            text-align: left;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(237, 242, 247, 0.85));
+            border: 1px solid rgba(20, 53, 79, 0.1);
+            box-shadow: 0 10px 20px rgba(20, 53, 79, 0.06);
+        }
+
+        .preset-btn:hover,
+        .ghost-btn:hover,
+        .solid-btn:hover {
             transform: translateY(-1px);
         }
 
-        .btn-calculate:active {
-            transform: translateY(0);
-            box-shadow: 0 3px 10px rgba(5, 28, 44, 0.30);
+        .preset-btn.active {
+            background: linear-gradient(180deg, rgba(244, 51, 61, 0.12), rgba(255, 255, 255, 0.92));
+            border-color: rgba(244, 51, 61, 0.28);
         }
 
-        .results-section {
-            background: var(--bg-secondary);
-            padding: 30px;
-            border-radius: 12px;
-            margin-top: 30px;
-            border: 2px solid var(--fanatics-navy);
-            box-shadow: 0 4px 20px rgba(5, 28, 44, 0.18);
-        }
-
-        .results-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .results-header h2 {
-            color: var(--fanatics-navy);
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .metric-card {
-            background: linear-gradient(135deg, var(--fanatics-navy) 0%, #0C304C 100%);
-            padding: 20px;
-            border-radius: 10px;
-            color: white;
-        }
-
-        .metric-card.highlight {
-            background: linear-gradient(135deg, var(--fanatics-red) 0%, #FF6B7A 100%);
-        }
-
-        .metric-label {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metric-value {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .channel-results {
-            margin-top: 25px;
-        }
-
-        .channel-result-item {
-            background: var(--bg-primary);
-            padding: 18px 20px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--fanatics-red);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s ease;
-        }
-
-        .channel-result-item:hover {
-            background: white;
-            transform: translateX(4px);
-        }
-
-        .channel-name {
-            font-weight: 700;
-            color: var(--fanatics-navy);
-            font-size: 15px;
-        }
-
-        .channel-metrics {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .channel-metric {
-            text-align: right;
-        }
-
-        .channel-metric-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .channel-metric-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--fanatics-navy);
-        }
-
-        .recommendations {
-            background: linear-gradient(135deg, #FFF7F5 0%, #FFE5E2 100%);
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 25px;
-            border: 2px solid var(--fanatics-red);
-        }
-
-        .recommendations h3 {
-            color: var(--fanatics-red);
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .recommendation-item {
-            padding: 12px 0;
-            color: var(--text-primary);
+        .preset-btn strong {
+            display: block;
             font-size: 14px;
-            line-height: 1.7;
-            border-bottom: 1px solid rgba(244, 51, 61, 0.15);
+            margin-bottom: 5px;
         }
 
-        .recommendation-item:last-child {
-            border-bottom: none;
+        .preset-btn span {
+            display: block;
+            color: var(--slate-600);
+            font-size: 12px;
+            line-height: 1.45;
         }
 
-        .recommendation-icon {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            background: var(--fanatics-red);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 20px;
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .control-card {
+            padding: 16px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 243, 239, 0.92));
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .control-card.full {
+            grid-column: 1 / -1;
+        }
+
+        .control-card label {
+            display: block;
+            margin-bottom: 8px;
             font-size: 12px;
             font-weight: 700;
-            margin-right: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-600);
         }
 
-        @media (max-width: 768px) {
-            .header-title h1 {
-                font-size: 22px;
+        select,
+        input[type="number"],
+        input[type="range"] {
+            width: 100%;
+        }
+
+        select,
+        input[type="number"] {
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(20, 53, 79, 0.14);
+            background: rgba(255, 255, 255, 0.88);
+            font-size: 15px;
+            color: var(--navy-950);
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            outline: 2px solid rgba(244, 51, 61, 0.18);
+            border-color: rgba(244, 51, 61, 0.5);
+        }
+
+        input[type="range"] {
+            accent-color: var(--red-500);
+        }
+
+        .range-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .range-row strong {
+            font-size: 14px;
+        }
+
+        .range-chip {
+            min-width: 68px;
+            text-align: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(244, 51, 61, 0.1);
+            color: var(--red-500);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .control-copy {
+            margin-top: 10px;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .solid-btn {
+            flex: 1;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--navy-950), var(--navy-800));
+            color: var(--white);
+            box-shadow: 0 12px 26px rgba(5, 24, 36, 0.2);
+            font-weight: 700;
+        }
+
+        .ghost-btn {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.88);
+            color: var(--navy-900);
+            border: 1px solid rgba(20, 53, 79, 0.1);
+            font-weight: 600;
+        }
+
+        .signal-card {
+            margin-top: 18px;
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(160deg, rgba(214, 255, 243, 0.75), rgba(255, 255, 255, 0.92));
+            border: 1px solid rgba(24, 197, 140, 0.15);
+        }
+
+        .signal-card h3 {
+            font-size: 19px;
+            margin-bottom: 8px;
+        }
+
+        .signal-card p {
+            margin: 0;
+            color: var(--slate-600);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .results-shell {
+            padding: 24px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 142px;
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(238, 243, 247, 0.9));
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .summary-card::after {
+            content: "";
+            position: absolute;
+            right: -28px;
+            bottom: -26px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(244, 51, 61, 0.08);
+        }
+
+        .summary-card strong {
+            display: block;
+            color: var(--slate-600);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            position: relative;
+            z-index: 1;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(26px, 2vw, 34px);
+            line-height: 1.05;
+            font-weight: 700;
+        }
+
+        .summary-card .meta {
+            position: relative;
+            z-index: 1;
+            margin-top: 10px;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .summary-card.emphasis {
+            background: linear-gradient(135deg, rgba(244, 51, 61, 0.95), rgba(255, 98, 106, 0.95));
+            color: var(--white);
+        }
+
+        .summary-card.emphasis strong,
+        .summary-card.emphasis .meta {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.94));
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            margin: 0 0 16px;
+            color: var(--slate-600);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .bar-chart {
+            display: grid;
+            gap: 14px;
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 170px 1fr auto;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .bar-label strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .bar-label span {
+            display: block;
+            color: var(--slate-600);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .bar-stack {
+            position: relative;
+            height: 14px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(20, 53, 79, 0.08);
+        }
+
+        .bar-platform,
+        .bar-incremental {
+            position: absolute;
+            inset: 0 auto 0 0;
+            border-radius: inherit;
+        }
+
+        .bar-platform {
+            background: linear-gradient(90deg, rgba(36, 81, 110, 0.18), rgba(36, 81, 110, 0.45));
+        }
+
+        .bar-incremental {
+            background: linear-gradient(90deg, var(--red-500), var(--red-400));
+        }
+
+        .bar-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--navy-900);
+            white-space: nowrap;
+        }
+
+        .mix-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .mix-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(237, 242, 247, 0.74);
+        }
+
+        .mix-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .mix-head strong {
+            font-size: 14px;
+        }
+
+        .mix-head span {
+            font-size: 12px;
+            color: var(--slate-600);
+        }
+
+        .mix-track {
+            height: 12px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(20, 53, 79, 0.08);
+            display: flex;
+        }
+
+        .mix-segment.brand { background: #ff8087; }
+        .mix-segment.hybrid { background: #ffb947; }
+        .mix-segment.performance { background: #2d8dd6; }
+        .mix-segment.harvest { background: #6a7391; }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--slate-600);
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend i {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .table-wrap {
+            margin-top: 18px;
+            overflow-x: auto;
+        }
+
+        .state-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .state-card {
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(238, 243, 247, 0.88));
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .state-card h4 {
+            font-size: 18px;
+        }
+
+        .state-card p {
+            margin: 4px 0 0;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .state-card .field-grid {
+            margin-top: 14px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .state-table-wrap {
+            margin-top: 18px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(20, 53, 79, 0.08);
+            vertical-align: top;
+        }
+
+        th {
+            font-size: 12px;
+            color: var(--slate-600);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .channel-pill,
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .channel-pill {
+            background: rgba(20, 53, 79, 0.07);
+            color: var(--navy-900);
+        }
+
+        .badge.good {
+            background: rgba(24, 197, 140, 0.12);
+            color: #0c7f5b;
+        }
+
+        .badge.watch {
+            background: rgba(255, 191, 71, 0.18);
+            color: #9a6200;
+        }
+
+        .badge.risk {
+            background: rgba(244, 51, 61, 0.12);
+            color: #c42730;
+        }
+
+        .narrative-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .bullet-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .bullet {
+            padding: 15px 16px;
+            border-radius: 18px;
+            background: rgba(247, 243, 239, 0.88);
+            border: 1px solid rgba(20, 53, 79, 0.06);
+            line-height: 1.55;
+        }
+
+        .bullet strong {
+            color: var(--navy-900);
+        }
+
+        .footnote {
+            margin-top: 18px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(20, 53, 79, 0.06);
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .channel-card {
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 243, 239, 0.94));
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .channel-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .channel-head h4 {
+            font-size: 20px;
+        }
+
+        .channel-head p {
+            margin: 6px 0 0;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mini-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .mini-meta span {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(20, 53, 79, 0.06);
+            color: var(--slate-600);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field label {
+            font-size: 12px;
+            color: var(--slate-600);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .field small {
+            color: var(--slate-600);
+            font-size: 11px;
+        }
+
+        .channel-range {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .channel-range-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .channel-range-top span {
+            font-size: 13px;
+            color: var(--slate-600);
+        }
+
+        .helper {
+            margin-top: 22px;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .presentation-mode .panel,
+        .presentation-mode #channel-inputs,
+        .presentation-mode #state-inputs {
+            display: none;
+        }
+
+        .presentation-mode .layout {
+            grid-template-columns: 1fr;
+        }
+
+        .presentation-mode .page {
+            width: min(1520px, calc(100% - 28px));
+        }
+
+        .presentation-mode .hero {
+            padding: 34px 38px;
+        }
+
+        .presentation-mode .summary-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .presentation-mode .summary-card {
+            min-height: 172px;
+        }
+
+        .presentation-mode .summary-card .value {
+            font-size: clamp(34px, 3vw, 48px);
+        }
+
+        .presentation-mode .results-shell {
+            padding: 30px;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
             }
 
-            .calculator-grid {
+            body::before,
+            .panel,
+            #channel-inputs,
+            #state-inputs,
+            #copy-summary-btn,
+            #recalculate-btn,
+            #presentation-btn,
+            #csv-btn,
+            #pdf-btn,
+            #print-btn {
+                display: none !important;
+            }
+
+            .page {
+                width: 100%;
+                margin: 0;
+            }
+
+            .hero,
+            .results-shell,
+            .card {
+                box-shadow: none;
+                background: #ffffff;
+                border: 1px solid #d8e0e8;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .chart-grid,
+            .narrative-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1180px) {
+            .layout,
+            .hero-grid,
+            .chart-grid,
+            .narrative-grid {
                 grid-template-columns: 1fr;
             }
 
-            .channel-metrics {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-end;
+            .panel {
+                position: static;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 860px) {
+            .page {
+                width: min(100% - 18px, 1440px);
+                margin-top: 10px;
+            }
+
+            .hero,
+            .panel,
+            .results-shell {
+                padding: 20px;
+                border-radius: 24px;
+            }
+
+            .hero-bullets,
+            .control-grid,
+            .channel-grid,
+            .field-grid,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bar-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .hero-metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .preset-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .state-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-content">
-                <div class="logo-section">
-                    <div class="logo">
-                        <div class="logo-mark"></div>
-                        <div class="logo-text">
-                            <span>Fanatics</span>
+    <main class="page">
+        <section class="hero">
+            <div class="hero-topbar">
+                <div class="fanatics-lockup" aria-label="Fanatics presentation treatment">
+                    <div class="fanatics-mark" aria-hidden="true"><i></i></div>
+                    <div class="fanatics-wordmark">
+                        <strong>Fanatics</strong>
+                        <span>MMM Strategy Cockpit</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="ghost-btn" id="presentation-btn">Presentation Mode</button>
+                    <button class="ghost-btn" id="pdf-btn">Export PDF</button>
+                    <button class="ghost-btn" id="csv-btn">Export CSV</button>
+                </div>
+            </div>
+            <div class="eyebrow" style="margin-top:16px;">Fanatics Betting &amp; Gaming strategy tool</div>
+            <div class="hero-grid">
+                <div class="hero-copy">
+                    <h1>MMM Strategy Cockpit</h1>
+                    <p>
+                        A planning-grade version of the Fanatics MMM calculator built around the paid media team's actual concerns:
+                        reducing PMG black-box dependence, translating full-funnel performance for executives, and pressure-testing
+                        media decisions against incremental value instead of last-click comfort.
+                    </p>
+                    <div class="hero-bullets">
+                        <div class="hero-bullet">
+                            <strong>What it fixes</strong>
+                            <span>Shows credited versus incremental outcomes so brand search and retargeting can no longer hide inside platform ROAS.</span>
+                        </div>
+                        <div class="hero-bullet">
+                            <strong>How it helps</strong>
+                            <span>Turns spend, CAC, LTV, agency drag, FanCash halo, and funnel balance into leadership-ready recommendations.</span>
+                        </div>
+                        <div class="hero-bullet">
+                            <strong>Built for Fanatics</strong>
+                            <span>Supports Sportsbook, Casino, or combined planning and reflects the current 45/55 brand-lower-funnel operating reality.</span>
+                        </div>
+                        <div class="hero-bullet">
+                            <strong>What to do next</strong>
+                            <span>Use it to frame budget moves, then validate major swings with geo-lift, holdouts, and FanGraph once the data layer matures.</span>
                         </div>
                     </div>
-                    <div class="header-title">
-                        <h1>Media Mix Modeling Calculator</h1>
-                        <p>Fanatics Betting &amp; Gaming · Sportsbook &amp; Casino Performance Marketing</p>
+                </div>
+                <aside class="hero-panel">
+                    <h2>Leadership translation layer</h2>
+                    <p>
+                        Jamie called out three gaps: bring more media in-house, tell a clearer story upward, and lead a full-funnel team without drowning
+                        execs in black-box language. This version is designed to answer those gaps directly.
+                    </p>
+                    <div class="hero-metrics">
+                        <div class="hero-metric">
+                            <strong>Annual media base</strong>
+                            <span>$300M</span>
+                        </div>
+                        <div class="hero-metric">
+                            <strong>Agency fee drag</strong>
+                            <span>$20M</span>
+                        </div>
+                        <div class="hero-metric">
+                            <strong>Current mix</strong>
+                            <span>45 / 55</span>
+                        </div>
+                        <div class="hero-metric">
+                            <strong>Core lens</strong>
+                            <span>Incremental</span>
+                        </div>
                     </div>
-                </div>
-                <div class="beta-badge">INTERNAL TOOL</div>
+                </aside>
             </div>
-        </div>
+        </section>
 
-        <div class="intro-section">
-            <h2>How to Use This Calculator</h2>
-            <p><strong>Purpose:</strong> This tool helps Fanatics Sportsbook &amp; Casino paid media teams estimate incremental ROAS and contribution across key channels using Marketing Mix Modeling (MMM) concepts. Use it for quarterly planning, budget allocation decisions, and scenario testing.</p>
-            
-            <p><strong>Instructions:</strong></p>
-            <ul>
-                <li><strong>Enter Weekly Spend:</strong> Input your projected or actual weekly media spend for each channel in USD.</li>
-                <li><strong>Enter CAC (Customer Acquisition Cost):</strong> Your average cost to acquire one first-time depositor (FTD) for that channel.</li>
-                <li><strong>Enter Average LTV (Lifetime Value):</strong> The predicted 365-day LTV for customers acquired through this channel based on our analytics models.</li>
-                <li><strong>Click Calculate:</strong> The tool applies channel-specific adstock, saturation, and incrementality adjustments to estimate true incremental impact.</li>
-                <li><strong>Review Recommendations:</strong> Optimization insights appear below results to guide budget reallocation conversations with Commercial, Finance, and PMG.</li>
-            </ul>
-            
-            <p><strong>Context for Fanatics:</strong> We’re running roughly a 45% brand / 55% lower-funnel mix on a ~$300M annual budget across Sportsbook and Casino. This calculator reflects our philosophy that last‑click platform data over‑credits retargeting and brand search, while MMM highlights true incremental contribution. Use these outputs as signal—not gospel—for scenario planning with Jamie’s team.</p>
-        </div>
-
-        <!-- INPUT CARDS (UNCHANGED STRUCTURE) -->
-        <div class="calculator-grid">
-            <div class="input-card">
-                <h3><span class="channel-icon">PS</span>Paid Search (Non-Brand)</h3>
-                <p class="input-description">True demand creation – Google &amp; Bing non-brand queries targeting new bettors. High incrementality, competitive CPAs in sports betting.</p>
-                <div class="form-group">
-                    <label>Weekly Spend ($)</label>
-                    <input type="number" id="search-spend" value="50000" step="1000">
-                </div>
-                <div class="form-group">
-                    <label>CAC ($)</label>
-                    <input type="number" id="search-cac" value="75" step="5">
-                </div>
-                <div class="form-group">
-                    <label>Avg LTV ($)</label>
-                    <input type="number" id="search-ltv" value="220" step="10">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <h3><span class="channel-icon">SA</span>Social Ads (Prospecting)</h3>
-                <p class="input-description">Meta, TikTok, Snapchat prospecting. Critical for awareness in newer states where Fanatics is still building sports betting consideration.</p>
-                <div class="form-group">
-                    <label>Weekly Spend ($)</label>
-                    <input type="number" id="social-spend" value="75000" step="1000">
-                </div>
-                <div class="form-group">
-                    <label>CAC ($)</label>
-                    <input type="number" id="social-cac" value="95" step="5">
-                </div>
-                <div class="form-group">
-                    <label>Avg LTV ($)</label>
-                    <input type="number" id="social-ltv" value="185" step="10">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <h3><span class="channel-icon">YT</span>YouTube / Video</h3>
-                <p class="input-description">Pre-roll, bumper, and TrueView campaigns. Strong upper‑funnel driver with 14–21 day adstock; key around tentpoles (NFL, March Madness).</p>
-                <div class="form-group">
-                    <label>Weekly Spend ($)</label>
-                    <input type="number" id="youtube-spend" value="40000" step="1000">
-                </div>
-                <div class="form-group">
-                    <label>CAC ($)</label>
-                    <input type="number" id="youtube-cac" value="110" step="5">
-                </div>
-                <div class="form-group">
-                    <label>Avg LTV ($)</label>
-                    <input type="number" id="youtube-ltv" value="240" step="10">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <h3><span class="channel-icon">CT</span>Connected TV</h3>
-                <p class="input-description">Streaming partners (Hulu, Roku, etc.). Premium targeting, strong brand lift. 21–35 day impact window for live sports inventory.</p>
-                <div class="form-group">
-                    <label>Weekly Spend ($)</label>
-                    <input type="number" id="ctv-spend" value="60000" step="1000">
-                </div>
-                <div class="form-group">
-                    <label>CAC ($)</label>
-                    <input type="number" id="ctv-cac" value="125" step="5">
-                </div>
-                <div class="form-group">
-                    <label>Avg LTV ($)</label>
-                    <input type="number" id="ctv-ltv" value="265" step="10">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <h3><span class="channel-icon">RT</span>Retargeting (All Platforms)</h3>
-                <p class="input-description">Display, social, and search retargeting of site visitors and app openers. Captures recycled demand; platform ROAS looks great, incrementality does not.</p>
-                <div class="form-group">
-                    <label>Weekly Spend ($)</label>
-                    <input type="number" id="retarget-spend" value="35000" step="1000">
-                </div>
-                <div class="form-group">
-                    <label>CAC ($)</label>
-                    <input type="number" id="retarget-cac" value="55" step="5">
-                </div>
-                <div class="form-group">
-                    <label>Avg LTV ($)</label>
-                    <input type="number" id="retarget-ltv" value="190" step="10">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <h3><span class="channel-icon">AF</span>Affiliate / Influencer</h3>
-                <p class="input-description">Performance partnerships, betting influencers, and affiliate networks. Watch for attribution overlap; strong when paired with FanCash and offer strategy.</p>
-                <div class="form-group">
-                    <label>Weekly Spend ($)</label>
-                    <input type="number" id="affiliate-spend" value="45000" step="1000">
-                </div>
-                <div class="form-group">
-                    <label>CAC ($)</label>
-                    <input type="number" id="affiliate-cac" value="85" step="5">
-                </div>
-                <div class="form-group">
-                    <label>Avg LTV ($)</label>
-                    <input type="number" id="affiliate-ltv" value="200" step="10">
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-calculate" onclick="calculate()">Calculate Incremental Impact</button>
-
-        <div id="results" style="display:none;">
-            <div class="results-section">
-                <div class="results-header">
-                    <h2>Incremental Performance Analysis</h2>
-                </div>
-
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Total Weekly Spend</div>
-                        <div class="metric-value" id="total-spend">$0</div>
-                    </div>
-                    <div class="metric-card highlight">
-                        <div class="metric-label">Blended Incremental ROAS</div>
-                        <div class="metric-value" id="blended-roas">0.00x</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Total FTDs (Incremental)</div>
-                        <div class="metric-value" id="total-ftds">0</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Total Incremental Revenue</div>
-                        <div class="metric-value" id="total-revenue">$0</div>
+        <section class="layout">
+            <aside class="panel">
+                <div class="section-title">
+                    <div>
+                        <h2>Scenario Controls</h2>
+                        <p>Use presets first, then fine-tune the operating model and channel assumptions.</p>
                     </div>
                 </div>
 
-                <div class="channel-results">
-                    <h3 style="color: var(--fanatics-navy); margin-bottom: 15px; font-size: 18px;">Channel Breakdown</h3>
-                    <div id="channel-breakdown"></div>
+                <div class="preset-strip" id="preset-strip">
+                    <button class="preset-btn active" data-preset="current">
+                        <strong>Current Blend</strong>
+                        <span>Balanced mix with PMG fee drag and moderate FanCash halo.</span>
+                    </button>
+                    <button class="preset-btn" data-preset="tentpole">
+                        <strong>Tentpole Push</strong>
+                        <span>Heavier video and brand support for major sports moments.</span>
+                    </button>
+                    <button class="preset-btn" data-preset="inhouse">
+                        <strong>In-Housing Case</strong>
+                        <span>Reclaims working media from agency fees to show operating upside.</span>
+                    </button>
+                    <button class="preset-btn" data-preset="casino">
+                        <strong>Casino Value</strong>
+                        <span>Profitability-led lens with higher modeled LTV and tighter payback.</span>
+                    </button>
                 </div>
 
-                <div class="recommendations">
-                    <h3>🎯 Optimization Recommendations</h3>
-                    <div id="recommendations-content"></div>
+                <div class="control-grid">
+                    <div class="control-card">
+                        <label for="business-unit">Business Unit</label>
+                        <select id="business-unit">
+                            <option value="combined">Combined</option>
+                            <option value="sportsbook">Sportsbook</option>
+                            <option value="casino">Casino</option>
+                        </select>
+                    </div>
+
+                    <div class="control-card">
+                        <label for="planning-lens">Planning Lens</label>
+                        <select id="planning-lens">
+                            <option value="balanced">Balanced Growth</option>
+                            <option value="aggressive">Aggressive Acquisition</option>
+                            <option value="profitability">Profitability Guardrail</option>
+                        </select>
+                    </div>
+
+                    <div class="control-card">
+                        <label for="measurement-confidence">Measurement Confidence</label>
+                        <select id="measurement-confidence">
+                            <option value="0.72">Moderate: MMM + lift studies</option>
+                            <option value="0.56">Low: last-click heavy</option>
+                            <option value="0.84">High: stronger experiment coverage</option>
+                        </select>
+                    </div>
+
+                    <div class="control-card">
+                        <label for="payback-target">Payback Target (Months)</label>
+                        <input type="number" id="payback-target" value="6" min="3" max="18" step="1">
+                    </div>
+
+                    <div class="control-card full">
+                        <div class="range-row">
+                            <strong>Brand / awareness investment share</strong>
+                            <span class="range-chip" id="brand-mix-value">45%</span>
+                        </div>
+                        <input type="range" id="brand-mix" min="20" max="70" value="45" step="1">
+                        <div class="control-copy">Use this to stress-test whether the portfolio is still too last-click heavy or has enough upper-funnel support to make lower-funnel dollars more efficient.</div>
+                    </div>
+
+                    <div class="control-card full">
+                        <div class="range-row">
+                            <strong>Agency fee drag</strong>
+                            <span class="range-chip" id="agency-fee-value">6.7%</span>
+                        </div>
+                        <input type="range" id="agency-fee" min="0" max="12" value="6.7" step="0.1">
+                        <div class="control-copy">Fanatics discussed roughly $20M in agency fees on a ~$300M budget. This slider converts fee drag into lost working media.</div>
+                    </div>
+
+                    <div class="control-card full">
+                        <div class="range-row">
+                            <strong>FanCash / ecosystem halo</strong>
+                            <span class="range-chip" id="fan-cash-value">8%</span>
+                        </div>
+                        <input type="range" id="fan-cash" min="0" max="20" value="8" step="1">
+                        <div class="control-copy">Represents the cross-ecosystem lift from loyalty, owned audiences, and future FanGraph visibility. Sportsbook benefits more immediately; Casino lags until utilities mature.</div>
+                    </div>
                 </div>
+
+                <div class="actions">
+                    <button class="solid-btn" id="recalculate-btn">Refresh Scenario</button>
+                    <button class="ghost-btn" id="copy-summary-btn">Copy Exec Summary</button>
+                </div>
+
+                <div class="signal-card">
+                    <h3>Model guardrail</h3>
+                    <p>
+                        This is intentionally not pretending to be a perfect MMM. It is a decision support layer for planning conversations
+                        with Finance, Product, CRM, PMG, and the presidents while FanGraph, measurement ops, and in-housing mature.
+                    </p>
+                </div>
+            </aside>
+
+            <div>
+                <section class="results-shell">
+                    <div class="section-title">
+                        <div>
+                            <h2>Portfolio Output</h2>
+                            <p>Designed to answer the question: "How do we know it is actually working?" with something sharper than a black-box slide.</p>
+                        </div>
+                        <button class="ghost-btn" id="print-btn">Quick Print</button>
+                    </div>
+
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <strong>Total weekly investment</strong>
+                            <div class="value" id="summary-spend">$0</div>
+                            <div class="meta" id="summary-spend-meta">Across modeled paid channels.</div>
+                        </div>
+                        <div class="summary-card">
+                            <strong>Working media</strong>
+                            <div class="value" id="summary-working">$0</div>
+                            <div class="meta" id="summary-working-meta">After agency fee drag.</div>
+                        </div>
+                        <div class="summary-card emphasis">
+                            <strong>Blended incremental ROAS</strong>
+                            <div class="value" id="summary-roas">0.00x</div>
+                            <div class="meta" id="summary-roas-meta">Primary decision metric.</div>
+                        </div>
+                        <div class="summary-card">
+                            <strong>Incremental FTDs</strong>
+                            <div class="value" id="summary-ftds">0</div>
+                            <div class="meta" id="summary-ftds-meta">Adjusted for overlap and adstock.</div>
+                        </div>
+                        <div class="summary-card">
+                            <strong>Portfolio payback</strong>
+                            <div class="value" id="summary-payback">0.0 mo</div>
+                            <div class="meta" id="summary-payback-meta">Compared with target window.</div>
+                        </div>
+                        <div class="summary-card">
+                            <strong>Measurement range</strong>
+                            <div class="value" id="summary-range">$0</div>
+                            <div class="meta" id="summary-range-meta">Low-high incremental revenue band.</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-grid">
+                        <div class="card">
+                            <h3>Credited vs incremental reality</h3>
+                            <p>These bars make over-crediting visible. The pale bar is platform-credited ROAS; the red bar is modeled incremental ROAS.</p>
+                            <div class="bar-chart" id="roas-chart"></div>
+                        </div>
+                        <div class="card">
+                            <h3>Funnel balance</h3>
+                            <p>Fanatics is moving away from a 90% last-click posture. This view checks whether the spend mix is behaving like a healthy full-funnel portfolio.</p>
+                            <div class="mix-grid">
+                                <div class="mix-card">
+                                    <div class="mix-head">
+                                        <strong>Stage allocation</strong>
+                                        <span id="stage-allocation-label">Awareness 0% · Hybrid 0% · Performance 0% · Harvest 0%</span>
+                                    </div>
+                                    <div class="mix-track" id="stage-mix-track"></div>
+                                    <div class="legend">
+                                        <span><i style="background:#ff8087"></i>Awareness</span>
+                                        <span><i style="background:#ffb947"></i>Hybrid</span>
+                                        <span><i style="background:#2d8dd6"></i>Performance</span>
+                                        <span><i style="background:#6a7391"></i>Harvest</span>
+                                    </div>
+                                </div>
+                                <div class="mix-card">
+                                    <div class="mix-head">
+                                        <strong>Brand mix health</strong>
+                                        <span id="brand-health-label">On plan</span>
+                                    </div>
+                                    <div class="mix-track">
+                                        <div class="mix-segment brand" id="brand-health-fill" style="width:45%"></div>
+                                    </div>
+                                    <div class="helper">Benchmarking against a 45% brand / 55% lower-funnel target from the interview context.</div>
+                                </div>
+                                <div class="mix-card">
+                                    <div class="mix-head">
+                                        <strong>Working media retained</strong>
+                                        <span id="working-media-health">0%</span>
+                                    </div>
+                                    <div class="mix-track">
+                                        <div class="mix-segment performance" id="working-media-fill" style="width:0%"></div>
+                                    </div>
+                                    <div class="helper">This is the cleanest expression of the in-housing argument: how much spend actually reaches media.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card table-wrap">
+                        <h3>Channel intelligence</h3>
+                        <p>Each row surfaces whether a channel is truly creating value, merely harvesting demand, or carrying hidden pressure on payback and confidence.</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Channel</th>
+                                    <th>Weekly Spend</th>
+                                    <th>Working Media</th>
+                                    <th>Credited ROAS</th>
+                                    <th>Incremental ROAS</th>
+                                    <th>Payback</th>
+                                    <th>Confidence</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="channel-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="narrative-grid">
+                        <div class="card">
+                            <h3>Recommended moves</h3>
+                            <p>Short, concrete actions for the paid media team and leadership conversations.</p>
+                            <div class="bullet-list" id="recommendations-list"></div>
+                        </div>
+                        <div class="card">
+                            <h3>Executive narrative</h3>
+                            <p>Ready-to-use summary language for Jamie, Finance, or the presidents.</p>
+                            <div class="bullet-list" id="narrative-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="footnote" id="footnote">
+                        This scenario should be treated as a directional planning layer. Large reallocations still need geo-lift or holdout validation, especially for tentpoles, FanCash-led campaigns, and any state-specific launch plan.
+                    </div>
+                </section>
+
+                <section class="card" id="state-inputs" style="margin-top:18px;">
+                    <div class="section-title">
+                        <div>
+                            <h2>State-by-State Planning Inputs</h2>
+                            <p>Weight the portfolio by market importance, market efficiency, and compliance friction so the topline story reflects real operating differences by state.</p>
+                        </div>
+                    </div>
+                    <div class="actions" style="margin-top:0;">
+                        <button class="ghost-btn" id="normalize-states-btn">Normalize Shares</button>
+                    </div>
+                    <div class="state-grid" id="state-grid"></div>
+                </section>
+
+                <section class="card state-table-wrap">
+                    <h3>State planning view</h3>
+                    <p>This turns one portfolio assumption set into a state-level readout for budget, expected value, and execution risk.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Spend Share</th>
+                                <th>Weighted Spend</th>
+                                <th>Incremental Revenue</th>
+                                <th>Incremental ROAS</th>
+                                <th>Risk Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="state-table-body"></tbody>
+                    </table>
+                </section>
+
+                <section class="card" id="channel-inputs" style="margin-top:18px;">
+                    <div class="section-title">
+                        <div>
+                            <h2>Channel Inputs</h2>
+                            <p>Spend, CAC, and LTV are editable. Incrementality is exposed on-card so assumptions are transparent instead of buried.</p>
+                        </div>
+                    </div>
+                    <div class="channel-grid" id="channel-grid"></div>
+                </section>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
-        const channelConfigs = {
-            'search': { name: 'Paid Search (Non-Brand)', incrementality: 0.65, adstock: 0.15, saturation: 0.85, icon: 'PS' },
-            'social': { name: 'Social Ads (Prospecting)', incrementality: 0.70, adstock: 0.35, saturation: 0.75, icon: 'SA' },
-            'youtube': { name: 'YouTube / Video', incrementality: 0.68, adstock: 0.50, saturation: 0.80, icon: 'YT' },
-            'ctv': { name: 'Connected TV', incrementality: 0.75, adstock: 0.60, saturation: 0.85, icon: 'CT' },
-            'retarget': { name: 'Retargeting', incrementality: 0.25, adstock: 0.05, saturation: 0.60, icon: 'RT' },
-            'affiliate': { name: 'Affiliate / Influencer', incrementality: 0.40, adstock: 0.20, saturation: 0.70, icon: 'AF' }
+        const channelDefinitions = [
+            {
+                key: "search",
+                name: "Non-Brand Search",
+                stage: "performance",
+                description: "Demand capture with relatively high intent and cleaner incrementality than brand terms.",
+                spend: 52000,
+                cac: 78,
+                ltv: 230,
+                incrementality: 68,
+                adstockWeeks: 1.2,
+                saturation: 0.88,
+                overlap: 0.16,
+                confidence: 0.79,
+                fanCashSensitivity: 0.08
+            },
+            {
+                key: "brand",
+                name: "Brand Search",
+                stage: "harvest",
+                description: "Useful for conversion capture, but easily over-credited when the brand team does the heavy lifting.",
+                spend: 24000,
+                cac: 42,
+                ltv: 188,
+                incrementality: 28,
+                adstockWeeks: 0.6,
+                saturation: 0.62,
+                overlap: 0.72,
+                confidence: 0.58,
+                fanCashSensitivity: 0.04
+            },
+            {
+                key: "social",
+                name: "Paid Social Prospecting",
+                stage: "hybrid",
+                description: "Meta, TikTok, Snap, Reddit. Strong for scale, but only if it is not judged purely on last-click.",
+                spend: 76000,
+                cac: 96,
+                ltv: 196,
+                incrementality: 64,
+                adstockWeeks: 2.4,
+                saturation: 0.78,
+                overlap: 0.28,
+                confidence: 0.74,
+                fanCashSensitivity: 0.14
+            },
+            {
+                key: "youtube",
+                name: "YouTube / OLV",
+                stage: "awareness",
+                description: "High memory value during tentpoles. Needs lag-aware measurement so it is not punished by a short window.",
+                spend: 42000,
+                cac: 112,
+                ltv: 242,
+                incrementality: 71,
+                adstockWeeks: 3.2,
+                saturation: 0.83,
+                overlap: 0.22,
+                confidence: 0.69,
+                fanCashSensitivity: 0.16
+            },
+            {
+                key: "ctv",
+                name: "CTV / Streaming",
+                stage: "awareness",
+                description: "Premium reach with strong halo potential and slower payoff, especially around live sports.",
+                spend: 64000,
+                cac: 128,
+                ltv: 268,
+                incrementality: 76,
+                adstockWeeks: 4.1,
+                saturation: 0.86,
+                overlap: 0.18,
+                confidence: 0.67,
+                fanCashSensitivity: 0.18
+            },
+            {
+                key: "retarget",
+                name: "Retargeting",
+                stage: "harvest",
+                description: "Cheap-looking on-platform, often weak incrementally. Useful as a guardrail, dangerous as a growth story.",
+                spend: 36000,
+                cac: 56,
+                ltv: 192,
+                incrementality: 26,
+                adstockWeeks: 0.8,
+                saturation: 0.58,
+                overlap: 0.8,
+                confidence: 0.57,
+                fanCashSensitivity: 0.05
+            },
+            {
+                key: "affiliate",
+                name: "Affiliate / Creator",
+                stage: "hybrid",
+                description: "Can be efficient when aligned to offer strategy, but attribution overlap and rate discipline matter.",
+                spend: 47000,
+                cac: 88,
+                ltv: 206,
+                incrementality: 46,
+                adstockWeeks: 1.7,
+                saturation: 0.72,
+                overlap: 0.46,
+                confidence: 0.7,
+                fanCashSensitivity: 0.1
+            }
+        ];
+
+        const stateDefinitions = [
+            {
+                key: "ny",
+                name: "New York",
+                description: "High volume, expensive, strategically important.",
+                share: 24,
+                valueIndex: 0.94,
+                compliance: 95,
+                note: "Scale market with costly acquisition pressure."
+            },
+            {
+                key: "nj",
+                name: "New Jersey",
+                description: "Dense, efficient, mature sportsbook and casino behavior.",
+                share: 18,
+                valueIndex: 1.08,
+                compliance: 97,
+                note: "Healthy test market for cross-sell efficiency."
+            },
+            {
+                key: "pa",
+                name: "Pennsylvania",
+                description: "Large market with meaningful casino value contribution.",
+                share: 16,
+                valueIndex: 1.11,
+                compliance: 96,
+                note: "Often supports stronger blended LTV."
+            },
+            {
+                key: "mi",
+                name: "Michigan",
+                description: "Balanced market with strong iGaming behavior.",
+                share: 14,
+                valueIndex: 1.06,
+                compliance: 96,
+                note: "Good candidate for disciplined scaling."
+            },
+            {
+                key: "il",
+                name: "Illinois",
+                description: "Important volume market with tougher efficiency conditions.",
+                share: 15,
+                valueIndex: 0.92,
+                compliance: 94,
+                note: "Needs tighter CAC control and audience discipline."
+            },
+            {
+                key: "az",
+                name: "Arizona",
+                description: "Growth market with decent efficiency and room to learn.",
+                share: 13,
+                valueIndex: 1.02,
+                compliance: 97,
+                note: "Useful for creative and audience iteration."
+            }
+        ];
+
+        const stageConfig = {
+            awareness: {
+                label: "Awareness",
+                brandSensitivity: 0.42,
+                scaleThreshold: 90000,
+                overlapWeight: 0.4
+            },
+            hybrid: {
+                label: "Hybrid",
+                brandSensitivity: 0.22,
+                scaleThreshold: 85000,
+                overlapWeight: 0.5
+            },
+            performance: {
+                label: "Performance",
+                brandSensitivity: 0.1,
+                scaleThreshold: 76000,
+                overlapWeight: 0.56
+            },
+            harvest: {
+                label: "Harvest",
+                brandSensitivity: -0.08,
+                scaleThreshold: 52000,
+                overlapWeight: 0.65
+            }
         };
 
+        const planningLensConfig = {
+            balanced: {
+                incrementalityMultiplier: 1.0,
+                awarenessLift: 1.0,
+                paybackFlex: 1.0,
+                saturationPenalty: 1.0
+            },
+            aggressive: {
+                incrementalityMultiplier: 0.97,
+                awarenessLift: 1.08,
+                paybackFlex: 1.18,
+                saturationPenalty: 0.94
+            },
+            profitability: {
+                incrementalityMultiplier: 1.05,
+                awarenessLift: 0.93,
+                paybackFlex: 0.88,
+                saturationPenalty: 1.08
+            }
+        };
+
+        const businessUnitConfig = {
+            combined: {
+                ltvMultiplier: 1.0,
+                fanCashMultiplier: 1.0,
+                regulatoryDrag: 1.0
+            },
+            sportsbook: {
+                ltvMultiplier: 0.93,
+                fanCashMultiplier: 1.12,
+                regulatoryDrag: 0.98
+            },
+            casino: {
+                ltvMultiplier: 1.24,
+                fanCashMultiplier: 0.9,
+                regulatoryDrag: 0.95
+            }
+        };
+
+        const presets = {
+            current: {
+                businessUnit: "combined",
+                planningLens: "balanced",
+                measurementConfidence: 0.72,
+                paybackTarget: 6,
+                brandMix: 45,
+                agencyFee: 6.7,
+                fanCash: 8,
+                spendOverrides: {},
+                stateOverrides: {}
+            },
+            tentpole: {
+                businessUnit: "combined",
+                planningLens: "aggressive",
+                measurementConfidence: 0.68,
+                paybackTarget: 8,
+                brandMix: 58,
+                agencyFee: 6.7,
+                fanCash: 10,
+                spendOverrides: {
+                    social: 86000,
+                    youtube: 85000,
+                    ctv: 92000,
+                    brand: 32000
+                },
+                stateOverrides: {
+                    ny: { share: 27, valueIndex: 0.92 },
+                    nj: { share: 17, valueIndex: 1.1 },
+                    pa: { share: 17, valueIndex: 1.12 }
+                }
+            },
+            inhouse: {
+                businessUnit: "combined",
+                planningLens: "balanced",
+                measurementConfidence: 0.78,
+                paybackTarget: 6,
+                brandMix: 45,
+                agencyFee: 1.8,
+                fanCash: 10,
+                spendOverrides: {},
+                stateOverrides: {}
+            },
+            casino: {
+                businessUnit: "casino",
+                planningLens: "profitability",
+                measurementConfidence: 0.76,
+                paybackTarget: 5,
+                brandMix: 40,
+                agencyFee: 6.7,
+                fanCash: 6,
+                spendOverrides: {
+                    search: 48000,
+                    social: 62000,
+                    youtube: 30000,
+                    ctv: 50000,
+                    affiliate: 38000
+                },
+                stateOverrides: {
+                    nj: { share: 20, valueIndex: 1.14 },
+                    pa: { share: 20, valueIndex: 1.16 },
+                    mi: { share: 18, valueIndex: 1.11 }
+                }
+            }
+        };
+
+        const currency = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0
+        });
+
+        const numberFormat = new Intl.NumberFormat("en-US");
+
+        const state = {
+            activePreset: "current",
+            isPresentationMode: false,
+            lastResults: null
+        };
+
+        function formatCurrency(value) {
+            return currency.format(value || 0);
+        }
+
+        function formatCompactCurrency(value) {
+            return new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                notation: "compact",
+                maximumFractionDigits: 1
+            }).format(value || 0);
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(Math.max(value, min), max);
+        }
+
+        function renderChannelCards() {
+            const container = document.getElementById("channel-grid");
+            container.innerHTML = channelDefinitions.map((channel) => {
+                const stage = stageConfig[channel.stage].label;
+                return `
+                    <article class="channel-card">
+                        <div class="channel-head">
+                            <div>
+                                <h4>${channel.name}</h4>
+                                <p>${channel.description}</p>
+                            </div>
+                            <span class="channel-pill">${stage}</span>
+                        </div>
+                        <div class="mini-meta">
+                            <span>Adstock ${channel.adstockWeeks.toFixed(1)} wks</span>
+                            <span>Overlap ${(channel.overlap * 100).toFixed(0)}%</span>
+                            <span>Base confidence ${(channel.confidence * 100).toFixed(0)}%</span>
+                        </div>
+                        <div class="field-grid">
+                            <div class="field">
+                                <label for="${channel.key}-spend">Weekly Spend</label>
+                                <input type="number" id="${channel.key}-spend" value="${channel.spend}" min="0" step="1000">
+                            </div>
+                            <div class="field">
+                                <label for="${channel.key}-cac">CAC</label>
+                                <input type="number" id="${channel.key}-cac" value="${channel.cac}" min="1" step="1">
+                            </div>
+                            <div class="field">
+                                <label for="${channel.key}-ltv">365d LTV</label>
+                                <input type="number" id="${channel.key}-ltv" value="${channel.ltv}" min="1" step="1">
+                            </div>
+                        </div>
+                        <div class="channel-range">
+                            <div class="channel-range-top">
+                                <span>Visible incrementality assumption</span>
+                                <strong id="${channel.key}-incrementality-value">${channel.incrementality}%</strong>
+                            </div>
+                            <input type="range" id="${channel.key}-incrementality" min="10" max="90" step="1" value="${channel.incrementality}">
+                            <div class="helper">This lets the team challenge assumptions openly instead of receiving a black-box score with no knobs.</div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        function renderStateCards() {
+            const container = document.getElementById("state-grid");
+            container.innerHTML = stateDefinitions.map((market) => `
+                <article class="state-card">
+                    <h4>${market.name}</h4>
+                    <p>${market.description}</p>
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="${market.key}-share">Spend Share %</label>
+                            <input type="number" id="${market.key}-share" value="${market.share}" min="0" max="100" step="1">
+                        </div>
+                        <div class="field">
+                            <label for="${market.key}-value">Value Index</label>
+                            <input type="number" id="${market.key}-value" value="${market.valueIndex}" min="0.6" max="1.5" step="0.01">
+                        </div>
+                        <div class="field">
+                            <label for="${market.key}-compliance">Compliance %</label>
+                            <input type="number" id="${market.key}-compliance" value="${market.compliance}" min="70" max="100" step="1">
+                        </div>
+                    </div>
+                    <div class="helper">${market.note}</div>
+                </article>
+            `).join("");
+        }
+
+        function bindInputs() {
+            document.querySelectorAll("input, select").forEach((element) => {
+                element.addEventListener("input", () => {
+                    if (element.id.endsWith("-incrementality")) {
+                        const label = document.getElementById(`${element.id}-value`);
+                        if (label) label.textContent = `${element.value}%`;
+                    }
+                    if (element.id === "brand-mix") {
+                        document.getElementById("brand-mix-value").textContent = `${element.value}%`;
+                    }
+                    if (element.id === "agency-fee") {
+                        document.getElementById("agency-fee-value").textContent = `${Number(element.value).toFixed(1)}%`;
+                    }
+                    if (element.id === "fan-cash") {
+                        document.getElementById("fan-cash-value").textContent = `${element.value}%`;
+                    }
+                    calculate();
+                });
+            });
+
+            document.getElementById("recalculate-btn").addEventListener("click", calculate);
+            document.getElementById("print-btn").addEventListener("click", () => window.print());
+            document.getElementById("pdf-btn").addEventListener("click", exportPdf);
+            document.getElementById("csv-btn").addEventListener("click", exportCsv);
+            document.getElementById("copy-summary-btn").addEventListener("click", copyExecutiveSummary);
+            document.getElementById("presentation-btn").addEventListener("click", togglePresentationMode);
+            document.getElementById("normalize-states-btn").addEventListener("click", normalizeStateShares);
+
+            document.querySelectorAll(".preset-btn").forEach((button) => {
+                button.addEventListener("click", () => applyPreset(button.dataset.preset));
+            });
+        }
+
+        function applyPreset(presetKey) {
+            const preset = presets[presetKey];
+            if (!preset) return;
+
+            state.activePreset = presetKey;
+
+            document.getElementById("business-unit").value = preset.businessUnit;
+            document.getElementById("planning-lens").value = preset.planningLens;
+            document.getElementById("measurement-confidence").value = String(preset.measurementConfidence);
+            document.getElementById("payback-target").value = preset.paybackTarget;
+            document.getElementById("brand-mix").value = preset.brandMix;
+            document.getElementById("agency-fee").value = preset.agencyFee;
+            document.getElementById("fan-cash").value = preset.fanCash;
+
+            document.getElementById("brand-mix-value").textContent = `${preset.brandMix}%`;
+            document.getElementById("agency-fee-value").textContent = `${Number(preset.agencyFee).toFixed(1)}%`;
+            document.getElementById("fan-cash-value").textContent = `${preset.fanCash}%`;
+
+            channelDefinitions.forEach((channel) => {
+                const spend = preset.spendOverrides[channel.key] ?? channel.spend;
+                document.getElementById(`${channel.key}-spend`).value = spend;
+            });
+
+            stateDefinitions.forEach((market) => {
+                const override = preset.stateOverrides?.[market.key] ?? {};
+                document.getElementById(`${market.key}-share`).value = override.share ?? market.share;
+                document.getElementById(`${market.key}-value`).value = override.valueIndex ?? market.valueIndex;
+                document.getElementById(`${market.key}-compliance`).value = override.compliance ?? market.compliance;
+            });
+
+            document.querySelectorAll(".preset-btn").forEach((button) => {
+                button.classList.toggle("active", button.dataset.preset === presetKey);
+            });
+
+            calculate();
+        }
+
+        function getInputs() {
+            const settings = {
+                businessUnit: document.getElementById("business-unit").value,
+                planningLens: document.getElementById("planning-lens").value,
+                measurementConfidence: Number(document.getElementById("measurement-confidence").value),
+                paybackTarget: Number(document.getElementById("payback-target").value),
+                brandMix: Number(document.getElementById("brand-mix").value),
+                agencyFee: Number(document.getElementById("agency-fee").value) / 100,
+                fanCash: Number(document.getElementById("fan-cash").value) / 100
+            };
+
+            const channels = channelDefinitions.map((channel) => ({
+                ...channel,
+                spend: Number(document.getElementById(`${channel.key}-spend`).value) || 0,
+                cac: Number(document.getElementById(`${channel.key}-cac`).value) || 0,
+                ltv: Number(document.getElementById(`${channel.key}-ltv`).value) || 0,
+                incrementality: Number(document.getElementById(`${channel.key}-incrementality`).value) || 0
+            }));
+
+            const markets = stateDefinitions.map((market) => ({
+                ...market,
+                share: Number(document.getElementById(`${market.key}-share`).value) || 0,
+                valueIndex: Number(document.getElementById(`${market.key}-value`).value) || 0,
+                compliance: Number(document.getElementById(`${market.key}-compliance`).value) || 0
+            }));
+
+            return { settings, channels, markets };
+        }
+
+        function modelChannel(channel, settings) {
+            const business = businessUnitConfig[settings.businessUnit];
+            const lens = planningLensConfig[settings.planningLens];
+            const stage = stageConfig[channel.stage];
+
+            const workingMedia = channel.spend * (1 - settings.agencyFee);
+            const baseAttributedFTDs = channel.cac > 0 ? workingMedia / channel.cac : 0;
+            const ltvAdjusted = channel.ltv * business.ltvMultiplier;
+            const fanCashLift = 1 + settings.fanCash * channel.fanCashSensitivity * business.fanCashMultiplier;
+            const brandAlignment = 1 + ((settings.brandMix - 45) / 100) * stage.brandSensitivity;
+            const adstockLift = 1 + channel.adstockWeeks * 0.04 * (channel.stage === "awareness" ? lens.awarenessLift : 1);
+            const dedupeFactor = 1 - channel.overlap * stage.overlapWeight;
+            const baseIncrementality = (channel.incrementality / 100) * lens.incrementalityMultiplier;
+            const netIncrementality = clamp(baseIncrementality * dedupeFactor * business.regulatoryDrag, 0.06, 0.92);
+            const saturationPenalty = clamp(
+                1 - Math.pow(workingMedia / stage.scaleThreshold, 0.72) * (1 - channel.saturation) * lens.saturationPenalty,
+                0.54,
+                1.08
+            );
+
+            const incrementalFTDs = baseAttributedFTDs * netIncrementality * adstockLift * brandAlignment * fanCashLift * saturationPenalty;
+            const platformRevenue = baseAttributedFTDs * ltvAdjusted;
+            const incrementalRevenue = incrementalFTDs * ltvAdjusted;
+            const platformROAS = channel.spend > 0 ? platformRevenue / channel.spend : 0;
+            const incrementalROAS = channel.spend > 0 ? incrementalRevenue / channel.spend : 0;
+            const effectiveCAC = incrementalFTDs > 0 ? channel.spend / incrementalFTDs : 0;
+            const paybackMonths = ltvAdjusted > 0 ? effectiveCAC / (ltvAdjusted / 12) : 0;
+            const combinedConfidence = clamp(settings.measurementConfidence * channel.confidence, 0.32, 0.96);
+            const rangeFloor = incrementalRevenue * (1 - (1 - combinedConfidence) * 0.44);
+            const rangeCeiling = incrementalRevenue * (1 + (1 - combinedConfidence) * 0.28);
+
+            let action = "Hold";
+            let actionTone = "good";
+
+            if (incrementalROAS >= 2.8 && paybackMonths <= settings.paybackTarget) {
+                action = "Scale";
+                actionTone = "good";
+            } else if (incrementalROAS < 1.4 || paybackMonths > settings.paybackTarget * 1.35) {
+                action = "Cut / reframe";
+                actionTone = "risk";
+            } else if (platformROAS - incrementalROAS > 1.4) {
+                action = "Audit overlap";
+                actionTone = "watch";
+            } else {
+                action = "Optimize";
+                actionTone = "watch";
+            }
+
+            return {
+                ...channel,
+                workingMedia,
+                baseAttributedFTDs,
+                ltvAdjusted,
+                incrementalFTDs,
+                incrementalRevenue,
+                platformRevenue,
+                platformROAS,
+                incrementalROAS,
+                paybackMonths,
+                combinedConfidence,
+                rangeFloor,
+                rangeCeiling,
+                action,
+                actionTone
+            };
+        }
+
+        function buildStateModel(markets, totals) {
+            const totalShare = markets.reduce((sum, market) => sum + market.share, 0) || 1;
+            const weights = markets.map((market) => {
+                const shareNormalized = market.share / totalShare;
+                const factor = market.valueIndex * (market.compliance / 100);
+                return {
+                    ...market,
+                    shareNormalized,
+                    factor,
+                    weightedFactor: shareNormalized * factor
+                };
+            });
+
+            const denominator = weights.reduce((sum, market) => sum + market.weightedFactor, 0) || 1;
+            const portfolioMultiplier = weights.reduce((sum, market) => sum + market.weightedFactor, 0);
+
+            const stateRows = weights.map((market) => {
+                const revenueShare = market.weightedFactor / denominator;
+                const weightedSpend = totals.spend * market.shareNormalized;
+                const incrementalRevenue = totals.revenue * revenueShare;
+                const incrementalROAS = weightedSpend > 0 ? incrementalRevenue / weightedSpend : 0;
+
+                let risk = "Healthy";
+                if (market.compliance < 92) {
+                    risk = "Compliance drag";
+                } else if (market.valueIndex < 0.95) {
+                    risk = "Efficiency pressure";
+                } else if (market.valueIndex > 1.1) {
+                    risk = "High-value growth pocket";
+                }
+
+                return {
+                    ...market,
+                    weightedSpend,
+                    incrementalRevenue,
+                    incrementalROAS,
+                    risk
+                };
+            });
+
+            return {
+                portfolioMultiplier: portfolioMultiplier || 1,
+                stateRows,
+                totalShare
+            };
+        }
+
         function calculate() {
-            let totalSpend = 0;
-            let totalIncrementalRevenue = 0;
-            let totalIncrementalFTDs = 0;
-            const channelResults = [];
+            const { settings, channels, markets } = getInputs();
+            let modeledChannels = channels.map((channel) => modelChannel(channel, settings));
 
-            for (const [key, config] of Object.entries(channelConfigs)) {
-                const spend = parseFloat(document.getElementById(`${key}-spend`).value) || 0;
-                const cac = parseFloat(document.getElementById(`${key}-cac`).value) || 0;
-                const ltv = parseFloat(document.getElementById(`${key}-ltv`).value) || 0;
+            let totals = modeledChannels.reduce((acc, channel) => {
+                acc.spend += channel.spend;
+                acc.workingMedia += channel.workingMedia;
+                acc.ftds += channel.incrementalFTDs;
+                acc.revenue += channel.incrementalRevenue;
+                acc.low += channel.rangeFloor;
+                acc.high += channel.rangeCeiling;
+                acc.platformRevenue += channel.platformRevenue;
+                acc.stageSpend[channel.stage] += channel.spend;
+                return acc;
+            }, {
+                spend: 0,
+                workingMedia: 0,
+                ftds: 0,
+                revenue: 0,
+                low: 0,
+                high: 0,
+                platformRevenue: 0,
+                stageSpend: {
+                    awareness: 0,
+                    hybrid: 0,
+                    performance: 0,
+                    harvest: 0
+                }
+            });
 
-                if (spend === 0 || cac === 0 || ltv === 0) continue;
+            const stateModel = buildStateModel(markets, totals);
+            const stateMultiplier = clamp(stateModel.portfolioMultiplier, 0.82, 1.18);
 
-                totalSpend += spend;
-
-                const rawFTDs = spend / cac;
-                const saturationFactor = 1 - (Math.pow(spend / 100000, 0.4) * (1 - config.saturation));
-                const adstockAdjustedFTDs = rawFTDs * (1 + config.adstock);
-                const incrementalFTDs = adstockAdjustedFTDs * saturationFactor * config.incrementality;
-                
-                const incrementalRevenue = incrementalFTDs * ltv;
-                const incrementalROAS = incrementalRevenue / spend;
-
-                totalIncrementalRevenue += incrementalRevenue;
-                totalIncrementalFTDs += incrementalFTDs;
-
-                channelResults.push({
-                    name: config.name,
-                    spend,
+            modeledChannels = modeledChannels.map((channel) => {
+                const incrementalFTDs = channel.incrementalFTDs * stateMultiplier;
+                const incrementalRevenue = channel.incrementalRevenue * stateMultiplier;
+                const incrementalROAS = channel.spend > 0 ? incrementalRevenue / channel.spend : 0;
+                const effectiveCAC = incrementalFTDs > 0 ? channel.spend / incrementalFTDs : 0;
+                const paybackMonths = channel.ltvAdjusted > 0 ? effectiveCAC / (channel.ltvAdjusted / 12) : 0;
+                return {
+                    ...channel,
                     incrementalFTDs,
                     incrementalRevenue,
                     incrementalROAS,
-                    icon: config.icon
-                });
-            }
+                    paybackMonths,
+                    rangeFloor: channel.rangeFloor * stateMultiplier,
+                    rangeCeiling: channel.rangeCeiling * stateMultiplier
+                };
+            });
 
-            const blendedROAS = totalSpend > 0 ? totalIncrementalRevenue / totalSpend : 0;
+            totals = modeledChannels.reduce((acc, channel) => {
+                acc.spend += channel.spend;
+                acc.workingMedia += channel.workingMedia;
+                acc.ftds += channel.incrementalFTDs;
+                acc.revenue += channel.incrementalRevenue;
+                acc.low += channel.rangeFloor;
+                acc.high += channel.rangeCeiling;
+                acc.platformRevenue += channel.platformRevenue;
+                acc.stageSpend[channel.stage] += channel.spend;
+                return acc;
+            }, {
+                spend: 0,
+                workingMedia: 0,
+                ftds: 0,
+                revenue: 0,
+                low: 0,
+                high: 0,
+                platformRevenue: 0,
+                stageSpend: {
+                    awareness: 0,
+                    hybrid: 0,
+                    performance: 0,
+                    harvest: 0
+                }
+            });
 
-            document.getElementById('total-spend').textContent = '$' + totalSpend.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('blended-roas').textContent = blendedROAS.toFixed(2) + 'x';
-            document.getElementById('total-ftds').textContent = Math.round(totalIncrementalFTDs).toLocaleString('en-US');
-            document.getElementById('total-revenue').textContent = '$' + Math.round(totalIncrementalRevenue).toLocaleString('en-US');
+            const blendedROAS = totals.spend > 0 ? totals.revenue / totals.spend : 0;
+            const blendedPlatformROAS = totals.spend > 0 ? totals.platformRevenue / totals.spend : 0;
+            const paybackMonths = totals.ftds > 0 ? (totals.spend / totals.ftds) / ((totals.revenue / totals.ftds) / 12) : 0;
+            const workingMediaPct = totals.spend > 0 ? (totals.workingMedia / totals.spend) * 100 : 0;
 
-            let breakdownHTML = '';
-            channelResults.sort((a, b) => b.incrementalROAS - a.incrementalROAS).forEach(channel => {
-                breakdownHTML += `
-                    <div class="channel-result-item">
-                        <div class="channel-name">${channel.name}</div>
-                        <div class="channel-metrics">
-                            <div class="channel-metric">
-                                <div class="channel-metric-label">Incr. ROAS</div>
-                                <div class="channel-metric-value">${channel.incrementalROAS.toFixed(2)}x</div>
-                            </div>
-                            <div class="channel-metric">
-                                <div class="channel-metric-label">FTDs</div>
-                                <div class="channel-metric-value">${Math.round(channel.incrementalFTDs).toLocaleString('en-US')}</div>
-                            </div>
-                            <div class="channel-metric">
-                                <div class="channel-metric-label">Revenue</div>
-                                <div class="channel-metric-value">$${Math.round(channel.incrementalRevenue).toLocaleString('en-US')}</div>
-                            </div>
+            renderSummary(totals, blendedROAS, paybackMonths, settings);
+            renderCharts(modeledChannels, totals, blendedPlatformROAS, blendedROAS, settings, workingMediaPct);
+            renderTable(modeledChannels, settings);
+            renderStateTable(stateModel.stateRows);
+            renderRecommendations(modeledChannels, totals, blendedROAS, blendedPlatformROAS, paybackMonths, settings, stateModel);
+
+            state.lastResults = {
+                settings,
+                channels: modeledChannels,
+                totals,
+                stateRows: stateModel.stateRows,
+                blendedROAS,
+                blendedPlatformROAS,
+                paybackMonths
+            };
+        }
+
+        function renderSummary(totals, blendedROAS, paybackMonths, settings) {
+            document.getElementById("summary-spend").textContent = formatCompactCurrency(totals.spend);
+            document.getElementById("summary-spend-meta").textContent = `${formatCurrency(totals.spend)} across modeled paid channels.`;
+            document.getElementById("summary-working").textContent = formatCompactCurrency(totals.workingMedia);
+            document.getElementById("summary-working-meta").textContent = `${formatCurrency(totals.spend - totals.workingMedia)} lost to fee drag.`;
+            document.getElementById("summary-roas").textContent = `${blendedROAS.toFixed(2)}x`;
+            document.getElementById("summary-roas-meta").textContent = blendedROAS >= 2.3
+                ? "Portfolio is producing investable incremental value."
+                : "Returns are too dependent on overlap or low-quality capture.";
+            document.getElementById("summary-ftds").textContent = numberFormat.format(Math.round(totals.ftds));
+            document.getElementById("summary-ftds-meta").textContent = "Modeled after de-duplication, adstock, and funnel effects.";
+            document.getElementById("summary-payback").textContent = `${paybackMonths.toFixed(1)} mo`;
+            document.getElementById("summary-payback-meta").textContent = paybackMonths <= settings.paybackTarget
+                ? `Inside the ${settings.paybackTarget}-month target.`
+                : `Above the ${settings.paybackTarget}-month target.`;
+            document.getElementById("summary-range").textContent = `${formatCompactCurrency(totals.low)} - ${formatCompactCurrency(totals.high)}`;
+            document.getElementById("summary-range-meta").textContent = "Sensitivity band based on overall measurement confidence.";
+        }
+
+        function renderCharts(modeledChannels, totals, blendedPlatformROAS, blendedROAS, settings, workingMediaPct) {
+            const sorted = [...modeledChannels].sort((a, b) => b.incrementalROAS - a.incrementalROAS);
+            const maxRoas = Math.max(...sorted.map((channel) => Math.max(channel.platformROAS, channel.incrementalROAS)), 1);
+            const chart = document.getElementById("roas-chart");
+
+            chart.innerHTML = sorted.map((channel) => {
+                const platformWidth = `${(channel.platformROAS / maxRoas) * 100}%`;
+                const incrementalWidth = `${(channel.incrementalROAS / maxRoas) * 100}%`;
+
+                return `
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <strong>${channel.name}</strong>
+                            <span>${stageConfig[channel.stage].label} · ${channel.action}</span>
                         </div>
+                        <div class="bar-stack">
+                            <div class="bar-platform" style="width:${platformWidth}"></div>
+                            <div class="bar-incremental" style="width:${incrementalWidth}"></div>
+                        </div>
+                        <div class="bar-value">${channel.incrementalROAS.toFixed(2)}x incr. / ${channel.platformROAS.toFixed(2)}x credited</div>
                     </div>
                 `;
-            });
-            document.getElementById('channel-breakdown').innerHTML = breakdownHTML;
+            }).join("");
 
-            const recommendations = generateRecommendations(channelResults, blendedROAS);
-            let recsHTML = '';
-            recommendations.forEach((rec, idx) => {
-                recsHTML += `<div class="recommendation-item"><span class="recommendation-icon">${idx + 1}</span>${rec}</div>`;
-            });
-            document.getElementById('recommendations-content').innerHTML = recsHTML;
+            const stageTotal = totals.spend || 1;
+            const awarenessPct = (totals.stageSpend.awareness / stageTotal) * 100;
+            const hybridPct = (totals.stageSpend.hybrid / stageTotal) * 100;
+            const performancePct = (totals.stageSpend.performance / stageTotal) * 100;
+            const harvestPct = (totals.stageSpend.harvest / stageTotal) * 100;
 
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById("stage-allocation-label").textContent =
+                `Awareness ${awarenessPct.toFixed(0)}% · Hybrid ${hybridPct.toFixed(0)}% · Performance ${performancePct.toFixed(0)}% · Harvest ${harvestPct.toFixed(0)}%`;
+
+            document.getElementById("stage-mix-track").innerHTML = `
+                <div class="mix-segment brand" style="width:${awarenessPct}%"></div>
+                <div class="mix-segment hybrid" style="width:${hybridPct}%"></div>
+                <div class="mix-segment performance" style="width:${performancePct}%"></div>
+                <div class="mix-segment harvest" style="width:${harvestPct}%"></div>
+            `;
+
+            const brandLabel = document.getElementById("brand-health-label");
+            const brandFill = document.getElementById("brand-health-fill");
+            brandFill.style.width = `${settings.brandMix}%`;
+            if (Math.abs(settings.brandMix - 45) <= 5) {
+                brandLabel.textContent = "On plan for a balanced full-funnel portfolio";
+            } else if (settings.brandMix < 35) {
+                brandLabel.textContent = "Too performance-heavy; risk of rising acquisition costs";
+            } else {
+                brandLabel.textContent = "Upper-funnel heavy; requires patience on payback";
+            }
+
+            document.getElementById("working-media-health").textContent = `${workingMediaPct.toFixed(1)}%`;
+            document.getElementById("working-media-fill").style.width = `${workingMediaPct}%`;
+
+            const footnote = document.getElementById("footnote");
+            footnote.textContent =
+                `Modeled blended credited ROAS is ${blendedPlatformROAS.toFixed(2)}x versus ${blendedROAS.toFixed(2)}x incremental. ` +
+                `That gap is the reason this tool exists: to translate platform comfort into a more defensible planning story.`;
         }
 
-        function generateRecommendations(channels, blendedROAS) {
-            const recs = [];
-            if (channels.length === 0) {
-                recs.push('Add spend, CAC, and LTV for at least one channel to generate optimization guidance.');
-                return recs;
-            }
-
-            const topPerformer = channels[0];
-            const bottomPerformer = channels[channels.length - 1];
-
-            if (blendedROAS < 2.0) {
-                recs.push('<strong>Overall ROAS below target:</strong> Blended incremental ROAS is under 2.0x. Pressure-test CAC benchmarks by state versus category norms and explore shifting 5–10% into higher‑incrementality channels.');
-            } else if (blendedROAS > 3.5) {
-                recs.push('<strong>Headroom to scale:</strong> Blended incremental ROAS above 3.5x suggests room to responsibly increase spend. Test 20–30% budget increases in top channels with geo‑lift validation.');
-            }
-
-            if (topPerformer.incrementalROAS > 3.0) {
-                recs.push(`<strong>Lean into ${topPerformer.name}:</strong> Incremental ROAS of ${topPerformer.incrementalROAS.toFixed(2)}x indicates strong efficiency. Consider shifting 10–15% from weaker channels here, coordinated with Commercial & Finance.`);
-            }
-
-            if (bottomPerformer.incrementalROAS < 1.5) {
-                recs.push(`<strong>Interrogate ${bottomPerformer.name}:</strong> With incremental ROAS at ${bottomPerformer.incrementalROAS.toFixed(2)}x, review audience strategy, creative, and offer. Test a 20–30% cut and redeploy budget into prospecting/search.`);
-            }
-
-            const retargetChannel = channels.find(c => c.name.includes('Retargeting'));
-            if (retargetChannel && retargetChannel.incrementalROAS < 2.0) {
-                recs.push('<strong>Retargeting guarding rail:</strong> Low incremental ROAS suggests recycled demand. Cap retargeting as a % of total spend and reinvest into demand creation (non‑brand search, prospecting social, video/CTV).');
-            }
-
-            const ctvChannel = channels.find(c => c.name.includes('Connected TV'));
-            const youtubeChannel = channels.find(c => c.name.includes('YouTube'));
-            if (ctvChannel && youtubeChannel && (ctvChannel.incrementalROAS > 2.5 || youtubeChannel.incrementalROAS > 2.5)) {
-                recs.push('<strong>Video working hard:</strong> Strong returns from CTV/YouTube. Ensure our MMM and brand‑lift studies are capturing 2–4 week lag so we don’t under‑credit these channels in planning.');
-            }
-
-            recs.push('<strong>Next steps:</strong> Use this output to frame recommendations for Jamie, PMG, and the presidents. Validate big swings with geo‑experiments and ingest results into the evolving Fanatics MMM stack.');
-            return recs;
+        function renderTable(modeledChannels, settings) {
+            const body = document.getElementById("channel-table-body");
+            body.innerHTML = [...modeledChannels]
+                .sort((a, b) => b.incrementalROAS - a.incrementalROAS)
+                .map((channel) => {
+                    const confidenceTone = channel.combinedConfidence >= 0.68 ? "good" : channel.combinedConfidence >= 0.55 ? "watch" : "risk";
+                    const confidenceLabel = channel.combinedConfidence >= 0.68 ? "High enough" : channel.combinedConfidence >= 0.55 ? "Moderate" : "Thin";
+                    return `
+                        <tr>
+                            <td>
+                                <div class="channel-pill">${channel.name}</div>
+                                <div style="margin-top:8px;color:var(--slate-600);font-size:12px;">${stageConfig[channel.stage].label} · ${channel.incrementality}% base incrementality</div>
+                            </td>
+                            <td>${formatCurrency(channel.spend)}</td>
+                            <td>${formatCurrency(channel.workingMedia)}</td>
+                            <td>${channel.platformROAS.toFixed(2)}x</td>
+                            <td><strong>${channel.incrementalROAS.toFixed(2)}x</strong></td>
+                            <td>${channel.paybackMonths.toFixed(1)} mo</td>
+                            <td><span class="badge ${confidenceTone}">${confidenceLabel} ${(channel.combinedConfidence * 100).toFixed(0)}%</span></td>
+                            <td><span class="badge ${channel.actionTone}">${channel.action}</span></td>
+                        </tr>
+                    `;
+                })
+                .join("");
         }
+
+        function renderStateTable(stateRows) {
+            const body = document.getElementById("state-table-body");
+            body.innerHTML = stateRows
+                .sort((a, b) => b.incrementalROAS - a.incrementalROAS)
+                .map((market) => `
+                    <tr>
+                        <td>
+                            <div class="channel-pill">${market.name}</div>
+                            <div style="margin-top:8px;color:var(--slate-600);font-size:12px;">${market.description}</div>
+                        </td>
+                        <td>${market.shareNormalized ? (market.shareNormalized * 100).toFixed(1) : "0.0"}%</td>
+                        <td>${formatCurrency(market.weightedSpend)}</td>
+                        <td>${formatCurrency(market.incrementalRevenue)}</td>
+                        <td><strong>${market.incrementalROAS.toFixed(2)}x</strong></td>
+                        <td>${market.risk}</td>
+                    </tr>
+                `)
+                .join("");
+        }
+
+        function renderRecommendations(modeledChannels, totals, blendedROAS, blendedPlatformROAS, paybackMonths, settings, stateModel) {
+            const recommendations = [];
+            const narrative = [];
+
+            const sorted = [...modeledChannels].sort((a, b) => b.incrementalROAS - a.incrementalROAS);
+            const winners = sorted.filter((channel) => channel.incrementalROAS >= 2.3);
+            const losers = sorted.filter((channel) => channel.incrementalROAS < 1.5);
+            const retarget = modeledChannels.find((channel) => channel.key === "retarget");
+            const brandSearch = modeledChannels.find((channel) => channel.key === "brand");
+
+            if (winners.length > 0 && losers.length > 0) {
+                const donor = losers[0];
+                const receiver = winners[0];
+                const shift = donor.spend * 0.15;
+                const projectedLift = shift * Math.max(receiver.incrementalROAS - donor.incrementalROAS, 0);
+                recommendations.push(
+                    `<strong>Reallocate with intent:</strong> Move roughly ${formatCurrency(shift)} from ${donor.name} into ${receiver.name}. ` +
+                    `Modeled weekly upside is about ${formatCurrency(projectedLift)} in incremental value if execution quality holds.`
+                );
+            }
+
+            if (retarget && retarget.platformROAS - retarget.incrementalROAS > 1.5) {
+                recommendations.push(
+                    `<strong>Cap retargeting as a harvesting layer:</strong> ${retarget.name} is showing a ${(retarget.platformROAS - retarget.incrementalROAS).toFixed(2)}x ` +
+                    `credited-to-incremental gap. Keep it as a control surface, not the hero of the growth story.`
+                );
+            }
+
+            if (brandSearch && brandSearch.incrementalROAS < 1.2) {
+                recommendations.push(
+                    `<strong>Separate brand capture from brand creation:</strong> ${brandSearch.name} is inexpensive, but the model suggests low true incrementality. ` +
+                    `Use it to protect demand, not to justify underinvestment in awareness.`
+                );
+            }
+
+            if (settings.agencyFee >= 0.05) {
+                const annualizedLeakage = totals.spend * settings.agencyFee * 52;
+                recommendations.push(
+                    `<strong>Turn the in-housing case into math:</strong> At a ${Math.round(settings.agencyFee * 1000) / 10}% fee rate, this modeled portfolio leaks ` +
+                    `${formatCompactCurrency(annualizedLeakage)} annually before media even works. That is the clearest operating argument for reducing PMG dependence.`
+                );
+            }
+
+            const topState = [...stateModel.stateRows].sort((a, b) => b.incrementalROAS - a.incrementalROAS)[0];
+            if (topState) {
+                recommendations.push(
+                    `<strong>Use states as a budget filter:</strong> ${topState.name} is currently the strongest modeled state at ${topState.incrementalROAS.toFixed(2)}x incremental ROAS. ` +
+                    `If launch calendars allow, prioritize incremental dollars there before spreading them evenly across the map.`
+                );
+            }
+
+            if (paybackMonths > settings.paybackTarget) {
+                recommendations.push(
+                    `<strong>Tighten the value filter:</strong> Portfolio payback is ${paybackMonths.toFixed(1)} months against a ${settings.paybackTarget}-month target. ` +
+                    `Force weaker channels to prove their case with cleaner audience exclusions, creative changes, or smaller test cells.`
+                );
+            } else {
+                recommendations.push(
+                    `<strong>Keep scaling disciplined:</strong> Payback is inside the ${settings.paybackTarget}-month target, so the team has room to scale ` +
+                    `higher-quality channels without losing financial control.`
+                );
+            }
+
+            if (settings.brandMix < 35) {
+                recommendations.push(
+                    `<strong>Funnel is too bottom-heavy:</strong> The current brand share is ${settings.brandMix}%. Expect CAC to keep inflating unless YouTube, CTV, and prospecting social are allowed to do more memory-building work.`
+                );
+            } else if (settings.brandMix > 55) {
+                recommendations.push(
+                    `<strong>Protect against patience fatigue:</strong> Brand share is ${settings.brandMix}%. Make sure the narrative with Finance explicitly explains lag, adstock, and the expected timing of payoff.`
+                );
+            }
+
+            narrative.push(
+                `<strong>Portfolio read:</strong> The model shows ${blendedROAS.toFixed(2)}x blended incremental ROAS versus ${blendedPlatformROAS.toFixed(2)}x credited ROAS, ` +
+                `which means platform reporting is still overstating how hard some lower-funnel channels are actually working.`
+            );
+            narrative.push(
+                `<strong>Operating implication:</strong> ${formatCurrency(totals.spend - totals.workingMedia)} per week is being lost to non-working spend in this scenario. ` +
+                `That directly supports the case for bringing more media control in-house over time.`
+            );
+            narrative.push(
+                `<strong>Strategic implication:</strong> The current scenario is tuned for ${document.getElementById("business-unit").selectedOptions[0].textContent.toLowerCase()} planning, ` +
+                `with FanCash halo set to ${(settings.fanCash * 100).toFixed(0)}%. The bigger the ecosystem advantage gets, the less Fanatics needs to play a pure bidding war against DraftKings and FanDuel.`
+            );
+            narrative.push(
+                `<strong>State implication:</strong> State weighting is contributing a ${stateModel.portfolioMultiplier.toFixed(2)}x portfolio multiplier before channel choices are judged, ` +
+                `which makes state mix and compliance quality part of the same planning conversation as creative and bidding.`
+            );
+            narrative.push(
+                `<strong>Measurement implication:</strong> Confidence is set to ${(settings.measurementConfidence * 100).toFixed(0)}%, so this should guide planning and executive storytelling, ` +
+                `but meaningful reallocations still need geo-lift or holdouts to lock in credibility.`
+            );
+
+            document.getElementById("recommendations-list").innerHTML = recommendations
+                .map((item) => `<div class="bullet">${item}</div>`)
+                .join("");
+
+            document.getElementById("narrative-list").innerHTML = narrative
+                .map((item) => `<div class="bullet">${item}</div>`)
+                .join("");
+
+            state.execSummary = recommendations.map((item) => item.replace(/<[^>]+>/g, "")).join("\n");
+            state.narrativeSummary = narrative.map((item) => item.replace(/<[^>]+>/g, "")).join("\n");
+        }
+
+        async function copyExecutiveSummary() {
+            const text = [
+                "Fanatics MMM Strategy Cockpit",
+                "",
+                state.narrativeSummary || "",
+                "",
+                "Recommended moves:",
+                state.execSummary || ""
+            ].join("\n");
+
+            try {
+                await navigator.clipboard.writeText(text);
+                const button = document.getElementById("copy-summary-btn");
+                const original = button.textContent;
+                button.textContent = "Copied";
+                setTimeout(() => {
+                    button.textContent = original;
+                }, 1600);
+            } catch (error) {
+                window.alert("Clipboard access was blocked in this browser. You can still use the on-screen summary.");
+            }
+        }
+
+        function normalizeStateShares() {
+            const rawShares = stateDefinitions.map((market) => Number(document.getElementById(`${market.key}-share`).value) || 0);
+            const total = rawShares.reduce((sum, value) => sum + value, 0);
+
+            if (!total) return;
+
+            const normalizedShares = rawShares.map((value) => (value / total) * 100);
+            const normalizedTotalExcludingLast = normalizedShares.slice(0, -1).reduce((sum, value) => sum + value, 0);
+
+            stateDefinitions.forEach((market, index) => {
+                let normalized = normalizedShares[index];
+                if (index === stateDefinitions.length - 1) {
+                    normalized = 100 - normalizedTotalExcludingLast;
+                }
+                document.getElementById(`${market.key}-share`).value = normalized.toFixed(1);
+            });
+
+            calculate();
+        }
+
+        function togglePresentationMode(forceState) {
+            const nextState = typeof forceState === "boolean" ? forceState : !state.isPresentationMode;
+            state.isPresentationMode = nextState;
+            document.body.classList.toggle("presentation-mode", nextState);
+            const button = document.getElementById("presentation-btn");
+            button.textContent = nextState ? "Exit Presentation" : "Presentation Mode";
+
+            if (nextState && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (!nextState && document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function exportPdf() {
+            const restore = state.isPresentationMode;
+            if (!restore) {
+                togglePresentationMode(true);
+            }
+            window.print();
+            if (!restore) {
+                setTimeout(() => togglePresentationMode(false), 250);
+            }
+        }
+
+        function exportCsv() {
+            if (!state.lastResults) {
+                calculate();
+            }
+
+            const { settings, totals, channels, stateRows, blendedROAS, blendedPlatformROAS, paybackMonths } = state.lastResults;
+            const lines = [
+                ["Section", "Metric", "Value"],
+                ["Summary", "Business Unit", settings.businessUnit],
+                ["Summary", "Planning Lens", settings.planningLens],
+                ["Summary", "Brand Mix %", settings.brandMix],
+                ["Summary", "Agency Fee %", (settings.agencyFee * 100).toFixed(1)],
+                ["Summary", "FanCash Halo %", (settings.fanCash * 100).toFixed(0)],
+                ["Summary", "Weekly Spend", totals.spend.toFixed(2)],
+                ["Summary", "Working Media", totals.workingMedia.toFixed(2)],
+                ["Summary", "Incremental Revenue", totals.revenue.toFixed(2)],
+                ["Summary", "Incremental ROAS", blendedROAS.toFixed(4)],
+                ["Summary", "Credited ROAS", blendedPlatformROAS.toFixed(4)],
+                ["Summary", "Payback Months", paybackMonths.toFixed(2)],
+                [],
+                ["Channels", "Channel", "Stage", "Spend", "Working Media", "Credited ROAS", "Incremental ROAS", "Incremental Revenue", "Payback Months", "Action"],
+                ...channels.map((channel) => [
+                    "Channels",
+                    channel.name,
+                    channel.stage,
+                    channel.spend.toFixed(2),
+                    channel.workingMedia.toFixed(2),
+                    channel.platformROAS.toFixed(4),
+                    channel.incrementalROAS.toFixed(4),
+                    channel.incrementalRevenue.toFixed(2),
+                    channel.paybackMonths.toFixed(2),
+                    channel.action
+                ]),
+                [],
+                ["States", "State", "Spend Share %", "Weighted Spend", "Incremental Revenue", "Incremental ROAS", "Risk"],
+                ...stateRows.map((market) => [
+                    "States",
+                    market.name,
+                    (market.shareNormalized * 100).toFixed(2),
+                    market.weightedSpend.toFixed(2),
+                    market.incrementalRevenue.toFixed(2),
+                    market.incrementalROAS.toFixed(4),
+                    market.risk
+                ])
+            ];
+
+            const csv = lines
+                .map((row) => row.map((cell = "") => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+                .join("\n");
+
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "fanatics-mmm-strategy-cockpit.csv";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        renderChannelCards();
+        renderStateCards();
+        bindInputs();
+        applyPreset("current");
     </script>
 </body>
 </html>
