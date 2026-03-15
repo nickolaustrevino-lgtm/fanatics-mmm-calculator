@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanatics Media Mix Modeling Calculator</title>
+    <style>
+        :root {
+            /* UPDATED BRAND COLORS */
+            --fanatics-navy: #051C2C;
+            --fanatics-red: #F4333D;
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --border-color: rgba(5, 28, 44, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #E5EDF4 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--fanatics-navy);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(5, 28, 44, 0.35);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* REPLACED OLD LOGO BLOCK */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--fanatics-navy);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Simple abstract "F" mark nod to Fanatics without using the exact asset */
+        .logo-mark::before,
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            height: 10px;
+            background: var(--fanatics-red);
+            border-radius: 12px;
+        }
+
+        .logo-mark::before {
+            top: 7px;
+        }
+
+        .logo-mark::after {
+            top: 20px;
+            width: 70%;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 26px;
+            letter-spacing: -0.6px;
+        }
+
+        .logo-text span {
+            color: #FFFFFF;
+        }
+
+        .header-title h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.4px;
+        }
+
+        .header-title p {
+            margin: 8px 0 0 0;
+            opacity: 0.96;
+            font-size: 14px;
+        }
+
+        .beta-badge {
+            background: var(--fanatics-red);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .intro-section {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .intro-section h2 {
+            color: var(--fanatics-navy);
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .intro-section p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .intro-section ul {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 20px;
+            margin: 12px 0;
+        }
+
+        .intro-section li {
+            margin-bottom: 8px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .input-card {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .input-card:hover {
+            box-shadow: 0 4px 16px rgba(5, 28, 44, 0.18);
+            border-color: var(--fanatics-red);
+        }
+
+        .input-card h3 {
+            color: var(--fanatics-navy);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--fanatics-red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .input-description {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background: var(--bg-primary);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--fanatics-red);
+            background: white;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 16px;
+            background: var(--fanatics-navy);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(5, 28, 44, 0.35);
+            letter-spacing: 0.3px;
+        }
+
+        .btn-calculate:hover {
+            background: #082744;
+            box-shadow: 0 6px 18px rgba(5, 28, 44, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(5, 28, 44, 0.30);
+        }
+
+        .results-section {
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 2px solid var(--fanatics-navy);
+            box-shadow: 0 4px 20px rgba(5, 28, 44, 0.18);
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .results-header h2 {
+            color: var(--fanatics-navy);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--fanatics-navy) 0%, #0C304C 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .metric-card.highlight {
+            background: linear-gradient(135deg, var(--fanatics-red) 0%, #FF6B7A 100%);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .channel-results {
+            margin-top: 25px;
+        }
+
+        .channel-result-item {
+            background: var(--bg-primary);
+            padding: 18px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--fanatics-red);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .channel-result-item:hover {
+            background: white;
+            transform: translateX(4px);
+        }
+
+        .channel-name {
+            font-weight: 700;
+            color: var(--fanatics-navy);
+            font-size: 15px;
+        }
+
+        .channel-metrics {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .channel-metric {
+            text-align: right;
+        }
+
+        .channel-metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .channel-metric-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--fanatics-navy);
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #FFF7F5 0%, #FFE5E2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border: 2px solid var(--fanatics-red);
+        }
+
+        .recommendations h3 {
+            color: var(--fanatics-red);
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .recommendation-item {
+            padding: 12px 0;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.7;
+            border-bottom: 1px solid rgba(244, 51, 61, 0.15);
+        }
+
+        .recommendation-item:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: var(--fanatics-red);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header-title h1 {
+                font-size: 22px;
+            }
+
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .channel-metrics {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <div class="logo-mark"></div>
+                        <div class="logo-text">
+                            <span>Fanatics</span>
+                        </div>
+                    </div>
+                    <div class="header-title">
+                        <h1>Media Mix Modeling Calculator</h1>
+                        <p>Fanatics Betting &amp; Gaming · Sportsbook &amp; Casino Performance Marketing</p>
+                    </div>
+                </div>
+                <div class="beta-badge">INTERNAL TOOL</div>
+            </div>
+        </div>
+
+        <div class="intro-section">
+            <h2>How to Use This Calculator</h2>
+            <p><strong>Purpose:</strong> This tool helps Fanatics Sportsbook &amp; Casino paid media teams estimate incremental ROAS and contribution across key channels using Marketing Mix Modeling (MMM) concepts. Use it for quarterly planning, budget allocation decisions, and scenario testing.</p>
+            
+            <p><strong>Instructions:</strong></p>
+            <ul>
+                <li><strong>Enter Weekly Spend:</strong> Input your projected or actual weekly media spend for each channel in USD.</li>
+                <li><strong>Enter CAC (Customer Acquisition Cost):</strong> Your average cost to acquire one first-time depositor (FTD) for that channel.</li>
+                <li><strong>Enter Average LTV (Lifetime Value):</strong> The predicted 365-day LTV for customers acquired through this channel based on our analytics models.</li>
+                <li><strong>Click Calculate:</strong> The tool applies channel-specific adstock, saturation, and incrementality adjustments to estimate true incremental impact.</li>
+                <li><strong>Review Recommendations:</strong> Optimization insights appear below results to guide budget reallocation conversations with Commercial, Finance, and PMG.</li>
+            </ul>
+            
+            <p><strong>Context for Fanatics:</strong> We’re running roughly a 45% brand / 55% lower-funnel mix on a ~$300M annual budget across Sportsbook and Casino. This calculator reflects our philosophy that last‑click platform data over‑credits retargeting and brand search, while MMM highlights true incremental contribution. Use these outputs as signal—not gospel—for scenario planning with Jamie’s team.</p>
+        </div>
+
+        <!-- INPUT CARDS (UNCHANGED STRUCTURE) -->
+        <div class="calculator-grid">
+            <div class="input-card">
+                <h3><span class="channel-icon">PS</span>Paid Search (Non-Brand)</h3>
+                <p class="input-description">True demand creation – Google &amp; Bing non-brand queries targeting new bettors. High incrementality, competitive CPAs in sports betting.</p>
+                <div class="form-group">
+                    <label>Weekly Spend ($)</label>
+                    <input type="number" id="search-spend" value="50000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="search-cac" value="75" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Avg LTV ($)</label>
+                    <input type="number" id="search-ltv" value="220" step="10">
+                </div>
+            </div>
+
+            <div class="input-card">
+                <h3><span class="channel-icon">SA</span>Social Ads (Prospecting)</h3>
+                <p class="input-description">Meta, TikTok, Snapchat prospecting. Critical for awareness in newer states where Fanatics is still building sports betting consideration.</p>
+                <div class="form-group">
+                    <label>Weekly Spend ($)</label>
+                    <input type="number" id="social-spend" value="75000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="social-cac" value="95" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Avg LTV ($)</label>
+                    <input type="number" id="social-ltv" value="185" step="10">
+                </div>
+            </div>
+
+            <div class="input-card">
+                <h3><span class="channel-icon">YT</span>YouTube / Video</h3>
+                <p class="input-description">Pre-roll, bumper, and TrueView campaigns. Strong upper‑funnel driver with 14–21 day adstock; key around tentpoles (NFL, March Madness).</p>
+                <div class="form-group">
+                    <label>Weekly Spend ($)</label>
+                    <input type="number" id="youtube-spend" value="40000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="youtube-cac" value="110" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Avg LTV ($)</label>
+                    <input type="number" id="youtube-ltv" value="240" step="10">
+                </div>
+            </div>
+
+            <div class="input-card">
+                <h3><span class="channel-icon">CT</span>Connected TV</h3>
+                <p class="input-description">Streaming partners (Hulu, Roku, etc.). Premium targeting, strong brand lift. 21–35 day impact window for live sports inventory.</p>
+                <div class="form-group">
+                    <label>Weekly Spend ($)</label>
+                    <input type="number" id="ctv-spend" value="60000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="ctv-cac" value="125" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Avg LTV ($)</label>
+                    <input type="number" id="ctv-ltv" value="265" step="10">
+                </div>
+            </div>
+
+            <div class="input-card">
+                <h3><span class="channel-icon">RT</span>Retargeting (All Platforms)</h3>
+                <p class="input-description">Display, social, and search retargeting of site visitors and app openers. Captures recycled demand; platform ROAS looks great, incrementality does not.</p>
+                <div class="form-group">
+                    <label>Weekly Spend ($)</label>
+                    <input type="number" id="retarget-spend" value="35000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="retarget-cac" value="55" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Avg LTV ($)</label>
+                    <input type="number" id="retarget-ltv" value="190" step="10">
+                </div>
+            </div>
+
+            <div class="input-card">
+                <h3><span class="channel-icon">AF</span>Affiliate / Influencer</h3>
+                <p class="input-description">Performance partnerships, betting influencers, and affiliate networks. Watch for attribution overlap; strong when paired with FanCash and offer strategy.</p>
+                <div class="form-group">
+                    <label>Weekly Spend ($)</label>
+                    <input type="number" id="affiliate-spend" value="45000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>CAC ($)</label>
+                    <input type="number" id="affiliate-cac" value="85" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Avg LTV ($)</label>
+                    <input type="number" id="affiliate-ltv" value="200" step="10">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-calculate" onclick="calculate()">Calculate Incremental Impact</button>
+
+        <div id="results" style="display:none;">
+            <div class="results-section">
+                <div class="results-header">
+                    <h2>Incremental Performance Analysis</h2>
+                </div>
+
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Weekly Spend</div>
+                        <div class="metric-value" id="total-spend">$0</div>
+                    </div>
+                    <div class="metric-card highlight">
+                        <div class="metric-label">Blended Incremental ROAS</div>
+                        <div class="metric-value" id="blended-roas">0.00x</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total FTDs (Incremental)</div>
+                        <div class="metric-value" id="total-ftds">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Incremental Revenue</div>
+                        <div class="metric-value" id="total-revenue">$0</div>
+                    </div>
+                </div>
+
+                <div class="channel-results">
+                    <h3 style="color: var(--fanatics-navy); margin-bottom: 15px; font-size: 18px;">Channel Breakdown</h3>
+                    <div id="channel-breakdown"></div>
+                </div>
+
+                <div class="recommendations">
+                    <h3>🎯 Optimization Recommendations</h3>
+                    <div id="recommendations-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const channelConfigs = {
+            'search': { name: 'Paid Search (Non-Brand)', incrementality: 0.65, adstock: 0.15, saturation: 0.85, icon: 'PS' },
+            'social': { name: 'Social Ads (Prospecting)', incrementality: 0.70, adstock: 0.35, saturation: 0.75, icon: 'SA' },
+            'youtube': { name: 'YouTube / Video', incrementality: 0.68, adstock: 0.50, saturation: 0.80, icon: 'YT' },
+            'ctv': { name: 'Connected TV', incrementality: 0.75, adstock: 0.60, saturation: 0.85, icon: 'CT' },
+            'retarget': { name: 'Retargeting', incrementality: 0.25, adstock: 0.05, saturation: 0.60, icon: 'RT' },
+            'affiliate': { name: 'Affiliate / Influencer', incrementality: 0.40, adstock: 0.20, saturation: 0.70, icon: 'AF' }
+        };
+
+        function calculate() {
+            let totalSpend = 0;
+            let totalIncrementalRevenue = 0;
+            let totalIncrementalFTDs = 0;
+            const channelResults = [];
+
+            for (const [key, config] of Object.entries(channelConfigs)) {
+                const spend = parseFloat(document.getElementById(`${key}-spend`).value) || 0;
+                const cac = parseFloat(document.getElementById(`${key}-cac`).value) || 0;
+                const ltv = parseFloat(document.getElementById(`${key}-ltv`).value) || 0;
+
+                if (spend === 0 || cac === 0 || ltv === 0) continue;
+
+                totalSpend += spend;
+
+                const rawFTDs = spend / cac;
+                const saturationFactor = 1 - (Math.pow(spend / 100000, 0.4) * (1 - config.saturation));
+                const adstockAdjustedFTDs = rawFTDs * (1 + config.adstock);
+                const incrementalFTDs = adstockAdjustedFTDs * saturationFactor * config.incrementality;
+                
+                const incrementalRevenue = incrementalFTDs * ltv;
+                const incrementalROAS = incrementalRevenue / spend;
+
+                totalIncrementalRevenue += incrementalRevenue;
+                totalIncrementalFTDs += incrementalFTDs;
+
+                channelResults.push({
+                    name: config.name,
+                    spend,
+                    incrementalFTDs,
+                    incrementalRevenue,
+                    incrementalROAS,
+                    icon: config.icon
+                });
+            }
+
+            const blendedROAS = totalSpend > 0 ? totalIncrementalRevenue / totalSpend : 0;
+
+            document.getElementById('total-spend').textContent = '$' + totalSpend.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('blended-roas').textContent = blendedROAS.toFixed(2) + 'x';
+            document.getElementById('total-ftds').textContent = Math.round(totalIncrementalFTDs).toLocaleString('en-US');
+            document.getElementById('total-revenue').textContent = '$' + Math.round(totalIncrementalRevenue).toLocaleString('en-US');
+
+            let breakdownHTML = '';
+            channelResults.sort((a, b) => b.incrementalROAS - a.incrementalROAS).forEach(channel => {
+                breakdownHTML += `
+                    <div class="channel-result-item">
+                        <div class="channel-name">${channel.name}</div>
+                        <div class="channel-metrics">
+                            <div class="channel-metric">
+                                <div class="channel-metric-label">Incr. ROAS</div>
+                                <div class="channel-metric-value">${channel.incrementalROAS.toFixed(2)}x</div>
+                            </div>
+                            <div class="channel-metric">
+                                <div class="channel-metric-label">FTDs</div>
+                                <div class="channel-metric-value">${Math.round(channel.incrementalFTDs).toLocaleString('en-US')}</div>
+                            </div>
+                            <div class="channel-metric">
+                                <div class="channel-metric-label">Revenue</div>
+                                <div class="channel-metric-value">$${Math.round(channel.incrementalRevenue).toLocaleString('en-US')}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('channel-breakdown').innerHTML = breakdownHTML;
+
+            const recommendations = generateRecommendations(channelResults, blendedROAS);
+            let recsHTML = '';
+            recommendations.forEach((rec, idx) => {
+                recsHTML += `<div class="recommendation-item"><span class="recommendation-icon">${idx + 1}</span>${rec}</div>`;
+            });
+            document.getElementById('recommendations-content').innerHTML = recsHTML;
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function generateRecommendations(channels, blendedROAS) {
+            const recs = [];
+            if (channels.length === 0) {
+                recs.push('Add spend, CAC, and LTV for at least one channel to generate optimization guidance.');
+                return recs;
+            }
+
+            const topPerformer = channels[0];
+            const bottomPerformer = channels[channels.length - 1];
+
+            if (blendedROAS < 2.0) {
+                recs.push('<strong>Overall ROAS below target:</strong> Blended incremental ROAS is under 2.0x. Pressure-test CAC benchmarks by state versus category norms and explore shifting 5–10% into higher‑incrementality channels.');
+            } else if (blendedROAS > 3.5) {
+                recs.push('<strong>Headroom to scale:</strong> Blended incremental ROAS above 3.5x suggests room to responsibly increase spend. Test 20–30% budget increases in top channels with geo‑lift validation.');
+            }
+
+            if (topPerformer.incrementalROAS > 3.0) {
+                recs.push(`<strong>Lean into ${topPerformer.name}:</strong> Incremental ROAS of ${topPerformer.incrementalROAS.toFixed(2)}x indicates strong efficiency. Consider shifting 10–15% from weaker channels here, coordinated with Commercial & Finance.`);
+            }
+
+            if (bottomPerformer.incrementalROAS < 1.5) {
+                recs.push(`<strong>Interrogate ${bottomPerformer.name}:</strong> With incremental ROAS at ${bottomPerformer.incrementalROAS.toFixed(2)}x, review audience strategy, creative, and offer. Test a 20–30% cut and redeploy budget into prospecting/search.`);
+            }
+
+            const retargetChannel = channels.find(c => c.name.includes('Retargeting'));
+            if (retargetChannel && retargetChannel.incrementalROAS < 2.0) {
+                recs.push('<strong>Retargeting guarding rail:</strong> Low incremental ROAS suggests recycled demand. Cap retargeting as a % of total spend and reinvest into demand creation (non‑brand search, prospecting social, video/CTV).');
+            }
+
+            const ctvChannel = channels.find(c => c.name.includes('Connected TV'));
+            const youtubeChannel = channels.find(c => c.name.includes('YouTube'));
+            if (ctvChannel && youtubeChannel && (ctvChannel.incrementalROAS > 2.5 || youtubeChannel.incrementalROAS > 2.5)) {
+                recs.push('<strong>Video working hard:</strong> Strong returns from CTV/YouTube. Ensure our MMM and brand‑lift studies are capturing 2–4 week lag so we don’t under‑credit these channels in planning.');
+            }
+
+            recs.push('<strong>Next steps:</strong> Use this output to frame recommendations for Jamie, PMG, and the presidents. Validate big swings with geo‑experiments and ingest results into the evolving Fanatics MMM stack.');
+            return recs;
+        }
+    </script>
+</body>
+</html>
