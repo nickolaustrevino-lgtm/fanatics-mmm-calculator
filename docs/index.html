@@ -1035,8 +1035,14 @@
         }
 
         @media print {
+            @page {
+                size: landscape;
+                margin: 0.5in;
+            }
+
             body {
                 background: #ffffff;
+                color: var(--navy-950);
             }
 
             body::before,
@@ -1065,6 +1071,55 @@
                 border: 1px solid #d8e0e8;
             }
 
+            .hero {
+                color: var(--navy-950);
+                overflow: visible;
+            }
+
+            .hero::after {
+                display: none;
+            }
+
+            .eyebrow,
+            .hero-bullet,
+            .hero-panel,
+            .hero-metric,
+            .summary-card,
+            .mix-card,
+            .signal-card,
+            .plan-card,
+            .state-card,
+            .channel-card {
+                background: #ffffff !important;
+                border: 1px solid #d8e0e8;
+                box-shadow: none;
+                backdrop-filter: none;
+            }
+
+            .fanatics-wordmark span,
+            .hero-copy p,
+            .hero-bullet strong,
+            .hero-bullet span,
+            .hero-panel p,
+            .hero-metric strong,
+            .hero-metric span,
+            .eyebrow,
+            .summary-card .meta,
+            .summary-card strong,
+            .helper,
+            .card p,
+            .section-title p,
+            .bullet,
+            .footnote,
+            th,
+            td {
+                color: var(--navy-950) !important;
+            }
+
+            .eyebrow::before {
+                box-shadow: none;
+            }
+
             .layout {
                 display: block;
             }
@@ -1076,6 +1131,28 @@
             .chart-grid,
             .narrative-grid {
                 grid-template-columns: 1fr;
+            }
+
+            table {
+                min-width: 0;
+                table-layout: fixed;
+            }
+
+            th,
+            td {
+                font-size: 11px;
+                word-break: break-word;
+            }
+
+            .hero,
+            .summary-card,
+            .card,
+            .plan-card,
+            .state-card,
+            .channel-card,
+            .mix-card,
+            .signal-card {
+                break-inside: avoid;
             }
         }
 
@@ -1152,9 +1229,9 @@
                     </div>
                 </div>
                 <div class="hero-actions">
-                    <button class="ghost-btn" id="presentation-btn">Presentation Mode</button>
-                    <button class="ghost-btn" id="pdf-btn">Export PDF</button>
-                    <button class="ghost-btn" id="csv-btn">Export CSV</button>
+                    <button class="ghost-btn" id="presentation-btn" type="button">Presentation Mode</button>
+                    <button class="ghost-btn" id="pdf-btn" type="button">Export PDF</button>
+                    <button class="ghost-btn" id="csv-btn" type="button">Export CSV</button>
                 </div>
             </div>
             <div class="eyebrow" style="margin-top:16px;">Fanatics Betting &amp; Gaming strategy tool</div>
@@ -2609,76 +2686,140 @@
             }
         }
 
-        function exportPdf() {
-            const restore = state.isPresentationMode;
-            if (!restore) {
-                togglePresentationMode(true);
-            }
-            window.print();
-            if (!restore) {
-                setTimeout(() => togglePresentationMode(false), 250);
-            }
+        function getWeekStartDate(date = new Date()) {
+            const nextDate = new Date(date);
+            const day = nextDate.getDay();
+            const diff = day === 0 ? -6 : 1 - day;
+            nextDate.setDate(nextDate.getDate() + diff);
+            nextDate.setHours(0, 0, 0, 0);
+            return nextDate.toISOString().slice(0, 10);
         }
 
-        function exportCsv() {
+        function getIsoTimestamp(date = new Date()) {
+            return new Date(date).toISOString();
+        }
+
+        function toTitleCase(value) {
+            return String(value || "")
+                .replace(/[_-]+/g, " ")
+                .replace(/\b\w/g, (letter) => letter.toUpperCase());
+        }
+
+        function buildCsvValue(row) {
+            return row
+                .map((cell = "") => `"${String(cell).replace(/"/g, '""')}"`)
+                .join(",");
+        }
+
+        function downloadCsv(filename, rows) {
+            const csv = `\uFEFF${rows.map(buildCsvValue).join("\n")}`;
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(url), 0);
+        }
+
+        function getChannelTemplateMetadata(channel) {
+            const metadataByChannel = {
+                search: {
+                    channel: "Search",
+                    subchannel: "Non-Brand Search",
+                    publisher: "Google Ads",
+                    objective: "Customer Acquisition",
+                    audienceType: "Prospecting",
+                    creativeFormat: "Text Ads"
+                },
+                brand: {
+                    channel: "Search",
+                    subchannel: "Brand Search",
+                    publisher: "Google Ads",
+                    objective: "Demand Capture",
+                    audienceType: "Branded Intent",
+                    creativeFormat: "Text Ads"
+                },
+                social: {
+                    channel: "Paid Social",
+                    subchannel: "Prospecting Social",
+                    publisher: "Meta / TikTok / Snap / Reddit",
+                    objective: "Customer Acquisition",
+                    audienceType: "Prospecting",
+                    creativeFormat: "Static / Video"
+                },
+                youtube: {
+                    channel: "Online Video",
+                    subchannel: "YouTube / OLV",
+                    publisher: "YouTube",
+                    objective: "Awareness",
+                    audienceType: "Broad / Contextual",
+                    creativeFormat: "Video"
+                },
+                ctv: {
+                    channel: "CTV",
+                    subchannel: "Streaming Video",
+                    publisher: "Programmatic / Direct",
+                    objective: "Awareness",
+                    audienceType: "Broad / Sports Fans",
+                    creativeFormat: "Video"
+                },
+                retarget: {
+                    channel: "Display",
+                    subchannel: "Retargeting",
+                    publisher: "Programmatic Display",
+                    objective: "Conversion",
+                    audienceType: "Retargeting",
+                    creativeFormat: "Display"
+                },
+                affiliate: {
+                    channel: "Affiliate",
+                    subchannel: "Affiliate / Creator",
+                    publisher: "Partner Network",
+                    objective: "Acquisition",
+                    audienceType: "Partner Referred",
+                    creativeFormat: "Content / Offer"
+                }
+            };
+
+            return metadataByChannel[channel.key] || {
+                channel: toTitleCase(channel.key),
+                subchannel: channel.name,
+                publisher: "Unknown",
+                objective: "TBD",
+                audienceType: "TBD",
+                creativeFormat: "TBD"
+            };
+        }
+
+        function exportPdf() {
             if (!state.lastResults) {
                 calculate();
             }
 
-            const { settings, totals, channels, stateRows, blendedROAS, blendedPlatformROAS, paybackMonths } = state.lastResults;
-            const lines = [
-                ["Section", "Metric", "Value"],
-                ["Summary", "Business Unit", settings.businessUnit],
-                ["Summary", "Planning Lens", settings.planningLens],
-                ["Summary", "Brand Mix %", settings.brandMix],
-                ["Summary", "Agency Fee %", (settings.agencyFee * 100).toFixed(1)],
-                ["Summary", "FanCash Halo %", (settings.fanCash * 100).toFixed(0)],
-                ["Summary", "Weekly Spend", totals.spend.toFixed(2)],
-                ["Summary", "Working Media", totals.workingMedia.toFixed(2)],
-                ["Summary", "Incremental Revenue", totals.revenue.toFixed(2)],
-                ["Summary", "Incremental ROAS", blendedROAS.toFixed(4)],
-                ["Summary", "Credited ROAS", blendedPlatformROAS.toFixed(4)],
-                ["Summary", "Payback Months", paybackMonths.toFixed(2)],
-                [],
-                ["Channels", "Channel", "Stage", "Spend", "Working Media", "Credited ROAS", "Incremental ROAS", "Incremental Revenue", "Payback Months", "Action"],
-                ...channels.map((channel) => [
-                    "Channels",
-                    channel.name,
-                    channel.stage,
-                    channel.spend.toFixed(2),
-                    channel.workingMedia.toFixed(2),
-                    channel.platformROAS.toFixed(4),
-                    channel.incrementalROAS.toFixed(4),
-                    channel.incrementalRevenue.toFixed(2),
-                    channel.paybackMonths.toFixed(2),
-                    channel.action
-                ]),
-                [],
-                ["States", "State", "Spend Share %", "Weighted Spend", "Incremental Revenue", "Incremental ROAS", "Risk"],
-                ...stateRows.map((market) => [
-                    "States",
-                    market.name,
-                    (market.shareNormalized * 100).toFixed(2),
-                    market.weightedSpend.toFixed(2),
-                    market.incrementalRevenue.toFixed(2),
-                    market.incrementalROAS.toFixed(4),
-                    market.risk
-                ])
-            ];
+            document.body.classList.add("pdf-export-mode");
 
-            const csv = lines
-                .map((row) => row.map((cell = "") => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-                .join("\n");
+            const cleanup = () => {
+                document.body.classList.remove("pdf-export-mode");
+            };
 
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
+            window.addEventListener("afterprint", cleanup, { once: true });
+            requestAnimationFrame(() => {
+                window.print();
+                window.setTimeout(cleanup, 1200);
+            });
+        }
+
+        function exportCsv() {
             const link = document.createElement("a");
-            link.href = url;
-            link.download = "fanatics-mmm-strategy-cockpit.csv";
+            link.href = "./fanatics-mmm-media-template.csv";
+            link.download = "fanatics-mmm-media-template.csv";
+            link.rel = "noopener";
             document.body.appendChild(link);
             link.click();
             link.remove();
-            URL.revokeObjectURL(url);
         }
 
         renderChannelCards();
