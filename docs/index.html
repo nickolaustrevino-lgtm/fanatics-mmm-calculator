@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fanatics MMM Strategy Cockpit</title>
+    <title>Portfolio MMM Strategy Cockpit</title>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
 
@@ -932,6 +932,127 @@
             margin-top: 0;
         }
 
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .simulator-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .simulator-chip {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(237, 242, 247, 0.74);
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .simulator-chip strong {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-600);
+        }
+
+        .simulator-chip span {
+            display: block;
+            margin-top: 8px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 26px;
+            line-height: 1.05;
+            color: var(--navy-950);
+        }
+
+        .simulator-chip span.good { color: #0c7f5b; }
+        .simulator-chip span.watch { color: #9a6200; }
+        .simulator-chip span.risk { color: #c42730; }
+
+        .curve-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .curve-panel {
+            padding: 18px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(238, 243, 247, 0.88));
+            border: 1px solid rgba(20, 53, 79, 0.08);
+        }
+
+        .curve-panel h4 {
+            font-size: 18px;
+        }
+
+        .curve-panel p {
+            margin: 6px 0 0;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .curve-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .curve-meta span {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(20, 53, 79, 0.06);
+            color: var(--slate-600);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .curve-svg {
+            width: 100%;
+            height: 190px;
+            display: block;
+            margin-top: 14px;
+        }
+
+        .curve-legend {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            color: var(--slate-600);
+            font-size: 12px;
+        }
+
+        .curve-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .curve-legend i {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .curve-note {
+            margin-top: 12px;
+            color: var(--slate-600);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
         .mini-meta {
             display: flex;
             flex-wrap: wrap;
@@ -1088,6 +1209,7 @@
             .mix-card,
             .signal-card,
             .plan-card,
+            .curve-panel,
             .state-card,
             .channel-card {
                 background: #ffffff !important;
@@ -1150,6 +1272,7 @@
             .plan-card,
             .state-card,
             .channel-card,
+            .curve-panel,
             .mix-card,
             .signal-card {
                 break-inside: avoid;
@@ -1160,7 +1283,8 @@
             .layout,
             .hero-grid,
             .chart-grid,
-            .narrative-grid {
+            .narrative-grid,
+            .curve-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -1194,7 +1318,9 @@
             .control-grid,
             .channel-grid,
             .field-grid,
-            .summary-grid {
+            .summary-grid,
+            .simulator-grid,
+            .simulator-metrics {
                 grid-template-columns: 1fr;
             }
 
@@ -1221,10 +1347,10 @@
     <main class="page">
         <section class="hero">
             <div class="hero-topbar">
-                <div class="fanatics-lockup" aria-label="Fanatics presentation treatment">
+                <div class="fanatics-lockup" aria-label="Portfolio presentation treatment">
                     <div class="fanatics-mark" aria-hidden="true"><i></i></div>
                     <div class="fanatics-wordmark">
-                        <strong>Fanatics</strong>
+                        <strong>Portfolio</strong>
                         <span>MMM Strategy Cockpit</span>
                     </div>
                 </div>
@@ -1234,13 +1360,13 @@
                     <button class="ghost-btn" id="csv-btn" type="button">Export CSV</button>
                 </div>
             </div>
-            <div class="eyebrow" style="margin-top:16px;">Fanatics Betting &amp; Gaming strategy tool</div>
+            <div class="eyebrow" style="margin-top:16px;">Paid Media Portfolio Planning Tool</div>
             <div class="hero-grid">
                 <div class="hero-copy">
                     <h1>MMM Strategy Cockpit</h1>
                     <p>
-                        A planning-grade version of the Fanatics MMM calculator built around the paid media team's actual concerns:
-                        reducing PMG black-box dependence, translating full-funnel performance for executives, and pressure-testing
+                        A planning-grade MMM cockpit built around the paid media team's actual concerns:
+                        reducing outside-agency black-box dependence, translating full-funnel performance for executive stakeholders, and pressure-testing
                         media decisions against incremental value instead of last-click comfort.
                     </p>
                     <div class="hero-bullets">
@@ -1250,23 +1376,23 @@
                         </div>
                         <div class="hero-bullet">
                             <strong>How it helps</strong>
-                            <span>Turns spend, CAC, LTV, agency drag, FanCash halo, and funnel balance into leadership-ready recommendations.</span>
+                            <span>Turns spend, CAC, LTV, fee drag, ecosystem halo, and funnel balance into leadership-ready recommendations.</span>
                         </div>
                         <div class="hero-bullet">
-                            <strong>Built for Fanatics</strong>
-                            <span>Supports Sportsbook, Casino, or combined planning and reflects the current 45/55 brand-lower-funnel operating reality.</span>
+                            <strong>Built for operators</strong>
+                            <span>Supports Sportsbook, Casino, or combined planning and reflects a realistic 45/55 brand-lower-funnel operating posture.</span>
                         </div>
                         <div class="hero-bullet">
                             <strong>What to do next</strong>
-                            <span>Use it to frame budget moves, then validate major swings with geo-lift, holdouts, and FanGraph once the data layer matures.</span>
+                            <span>Use it to frame budget moves, then validate major swings with geo-lift, holdouts, and a stronger measurement stack once the data layer matures.</span>
                         </div>
                     </div>
                 </div>
                 <aside class="hero-panel">
                     <h2>Leadership translation layer</h2>
                     <p>
-                        Jamie called out three gaps: bring more media in-house, tell a clearer story upward, and lead a full-funnel team without drowning
-                        execs in black-box language. This version is designed to answer those gaps directly.
+                        Growth leaders usually need three things at once: more control over working media, a clearer story for executives,
+                        and a full-funnel operating view that does not drown decision-makers in black-box language. This version is designed to answer those gaps directly.
                     </p>
                     <div class="hero-metrics">
                         <div class="hero-metric">
@@ -1302,7 +1428,7 @@
                 <div class="preset-strip" id="preset-strip">
                     <button class="preset-btn active" data-preset="current">
                         <strong>Current Blend</strong>
-                        <span>Balanced mix with PMG fee drag and moderate FanCash halo.</span>
+                        <span>Balanced mix with fee drag and moderate ecosystem halo.</span>
                     </button>
                     <button class="preset-btn" data-preset="tentpole">
                         <strong>Tentpole Push</strong>
@@ -1366,16 +1492,48 @@
                             <span class="range-chip" id="agency-fee-value">6.7%</span>
                         </div>
                         <input type="range" id="agency-fee" min="0" max="12" value="6.7" step="0.1">
-                        <div class="control-copy">Fanatics discussed roughly $20M in agency fees on a ~$300M budget. This slider converts fee drag into lost working media.</div>
+                        <div class="control-copy">Large operators often carry meaningful agency and tech fees on top of media. This slider converts fee drag into lost working media.</div>
                     </div>
 
                     <div class="control-card full">
                         <div class="range-row">
-                            <strong>FanCash / ecosystem halo</strong>
+                            <strong>Loyalty / ecosystem halo</strong>
                             <span class="range-chip" id="fan-cash-value">8%</span>
                         </div>
                         <input type="range" id="fan-cash" min="0" max="20" value="8" step="1">
-                        <div class="control-copy">Represents the cross-ecosystem lift from loyalty, owned audiences, and future FanGraph visibility. Sportsbook benefits more immediately; Casino lags until utilities mature.</div>
+                        <div class="control-copy">Represents the cross-ecosystem lift from loyalty, owned audiences, and better identity visibility. Sportsbook usually benefits more immediately; Casino often lags until utilities mature.</div>
+                    </div>
+
+                    <div class="control-card full">
+                        <div class="range-row">
+                            <strong>Budget reallocation simulator</strong>
+                            <span class="range-chip" id="shift-amount-label">$0</span>
+                        </div>
+                        <div class="simulator-grid">
+                            <div class="field">
+                                <label for="shift-from">Move From</label>
+                                <select id="shift-from"></select>
+                            </div>
+                            <div class="field">
+                                <label for="shift-to">Move To</label>
+                                <select id="shift-to"></select>
+                            </div>
+                            <div class="field">
+                                <label for="shift-amount">Shift Amount</label>
+                                <input type="number" id="shift-amount" value="0" min="0" step="5000">
+                            </div>
+                        </div>
+                        <div class="simulator-metrics">
+                            <div class="simulator-chip">
+                                <strong>Applied shift</strong>
+                                <span id="shift-applied">$0</span>
+                            </div>
+                            <div class="simulator-chip">
+                                <strong>Blended iROAS delta</strong>
+                                <span id="shift-roas-delta">0.00x</span>
+                            </div>
+                        </div>
+                        <div class="control-copy" id="shift-summary">Move dollars between two channels to see the blended incremental ROAS impact in real time.</div>
                     </div>
                 </div>
 
@@ -1388,7 +1546,7 @@
                     <h3>Model guardrail</h3>
                     <p>
                         This is intentionally not pretending to be a perfect MMM. It is a decision support layer for planning conversations
-                        with Finance, Product, CRM, PMG, and the presidents while FanGraph, measurement ops, and in-housing mature.
+                        with Finance, Product, CRM, agency partners, and executive leadership while the measurement stack, experimentation, and operating model mature.
                     </p>
                 </div>
             </aside>
@@ -1444,7 +1602,7 @@
                         </div>
                         <div class="card">
                             <h3>Funnel balance</h3>
-                            <p>Fanatics is moving away from a 90% last-click posture. This view checks whether the spend mix is behaving like a healthy full-funnel portfolio.</p>
+                            <p>This view checks whether the spend mix is behaving like a healthy full-funnel portfolio rather than a last-click-heavy capture machine.</p>
                             <div class="mix-grid">
                                 <div class="mix-card">
                                     <div class="mix-head">
@@ -1467,7 +1625,7 @@
                                     <div class="mix-track">
                                         <div class="mix-segment brand" id="brand-health-fill" style="width:45%"></div>
                                     </div>
-                                    <div class="helper">Benchmarking against a 45% brand / 55% lower-funnel target from the interview context.</div>
+                                    <div class="helper">Benchmarking against a 45% brand / 55% lower-funnel planning benchmark.</div>
                                 </div>
                                 <div class="mix-card">
                                     <div class="mix-head">
@@ -1477,11 +1635,44 @@
                                     <div class="mix-track">
                                         <div class="mix-segment performance" id="working-media-fill" style="width:0%"></div>
                                     </div>
-                                    <div class="helper">This is the cleanest expression of the in-housing argument: how much spend actually reaches media.</div>
+                                    <div class="helper">This is the cleanest expression of the operating model argument: how much spend actually reaches media.</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <section class="card" style="margin-top:18px;">
+                        <div class="section-title">
+                            <div>
+                                <h2>Diminishing Returns View</h2>
+                                <p>Stylized spend-versus-iROAS curves for two anchor channels to make saturation visible instead of implied.</p>
+                            </div>
+                        </div>
+                        <div class="curve-grid">
+                            <article class="curve-panel">
+                                <h4>Non-Brand Search</h4>
+                                <p>Fast-payback demand capture should still flatten as incremental reach gets more expensive.</p>
+                                <div class="curve-meta" id="search-curve-meta"></div>
+                                <svg class="curve-svg" id="search-curve" viewBox="0 0 320 190" preserveAspectRatio="none" aria-label="Non-Brand Search diminishing returns curve"></svg>
+                                <div class="curve-legend">
+                                    <span><i style="background:var(--red-500)"></i>Modeled iROAS curve</span>
+                                    <span><i style="background:var(--navy-800)"></i>Current spend point</span>
+                                </div>
+                                <div class="curve-note" id="search-curve-note"></div>
+                            </article>
+                            <article class="curve-panel">
+                                <h4>CTV / Streaming</h4>
+                                <p>Higher-adstock channels can absorb more spend, but saturation still shows up as slower marginal returns.</p>
+                                <div class="curve-meta" id="ctv-curve-meta"></div>
+                                <svg class="curve-svg" id="ctv-curve" viewBox="0 0 320 190" preserveAspectRatio="none" aria-label="CTV diminishing returns curve"></svg>
+                                <div class="curve-legend">
+                                    <span><i style="background:var(--red-500)"></i>Modeled iROAS curve</span>
+                                    <span><i style="background:var(--navy-800)"></i>Current spend point</span>
+                                </div>
+                                <div class="curve-note" id="ctv-curve-note"></div>
+                            </article>
+                        </div>
+                    </section>
 
                     <div class="card table-wrap">
                         <h3>Channel intelligence</h3>
@@ -1511,13 +1702,13 @@
                         </div>
                         <div class="card">
                             <h3>Executive narrative</h3>
-                            <p>Ready-to-use summary language for Jamie, Finance, or the presidents.</p>
+                            <p>Ready-to-use summary language for finance, growth leadership, or executive stakeholders.</p>
                             <div class="bullet-list" id="narrative-list"></div>
                         </div>
                     </div>
 
                     <div class="footnote" id="footnote">
-                        This scenario should be treated as a directional planning layer. Large reallocations still need geo-lift or holdout validation, especially for tentpoles, FanCash-led campaigns, and any state-specific launch plan.
+                        This scenario should be treated as a directional planning layer. Large reallocations still need geo-lift or holdout validation, especially for tentpoles, loyalty-led campaigns, and any state-specific launch plan.
                     </div>
                 </section>
 
@@ -2087,6 +2278,19 @@
             `).join("");
         }
 
+        function renderReallocationOptions() {
+            const options = channelDefinitions
+                .map((channel) => `<option value="${channel.key}">${channel.name}</option>`)
+                .join("");
+
+            document.getElementById("shift-from").innerHTML = options;
+            document.getElementById("shift-to").innerHTML = options;
+            document.getElementById("shift-from").value = "retarget";
+            document.getElementById("shift-to").value = "ctv";
+            document.getElementById("shift-amount").value = 0;
+            document.getElementById("shift-amount-label").textContent = formatCurrency(0);
+        }
+
         function bindInputs() {
             document.querySelectorAll("input, select").forEach((element) => {
                 element.addEventListener("input", () => {
@@ -2150,6 +2354,11 @@
                 document.getElementById(`${market.key}-compliance`).value = override.compliance ?? market.compliance;
             });
 
+            document.getElementById("shift-from").value = "retarget";
+            document.getElementById("shift-to").value = "ctv";
+            document.getElementById("shift-amount").value = 0;
+            document.getElementById("shift-amount-label").textContent = formatCurrency(0);
+
             document.querySelectorAll(".preset-btn").forEach((button) => {
                 button.classList.toggle("active", button.dataset.preset === presetKey);
             });
@@ -2183,7 +2392,13 @@
                 compliance: Number(document.getElementById(`${market.key}-compliance`).value) || 0
             }));
 
-            return { settings, channels, markets };
+            const reallocation = {
+                fromKey: document.getElementById("shift-from").value,
+                toKey: document.getElementById("shift-to").value,
+                amount: Number(document.getElementById("shift-amount").value) || 0
+            };
+
+            return { settings, channels, markets, reallocation };
         }
 
         function modelChannel(channel, settings) {
@@ -2300,8 +2515,42 @@
             };
         }
 
-        function calculate() {
-            const { settings, channels, markets } = getInputs();
+        function applyBudgetShift(channels, reallocation) {
+            if (!reallocation || !reallocation.fromKey || !reallocation.toKey || reallocation.fromKey === reallocation.toKey || reallocation.amount <= 0) {
+                return {
+                    channels: channels.map((channel) => ({ ...channel })),
+                    appliedShift: 0
+                };
+            }
+
+            const donor = channels.find((channel) => channel.key === reallocation.fromKey);
+            const receiver = channels.find((channel) => channel.key === reallocation.toKey);
+
+            if (!donor || !receiver) {
+                return {
+                    channels: channels.map((channel) => ({ ...channel })),
+                    appliedShift: 0
+                };
+            }
+
+            const appliedShift = clamp(reallocation.amount, 0, donor.spend);
+            const shiftedChannels = channels.map((channel) => {
+                if (channel.key === donor.key) {
+                    return { ...channel, spend: Math.max(0, channel.spend - appliedShift) };
+                }
+                if (channel.key === receiver.key) {
+                    return { ...channel, spend: channel.spend + appliedShift };
+                }
+                return { ...channel };
+            });
+
+            return {
+                channels: shiftedChannels,
+                appliedShift
+            };
+        }
+
+        function runScenario(settings, channels, markets) {
             let modeledChannels = channels.map((channel) => modelChannel(channel, settings));
 
             let totals = modeledChannels.reduce((acc, channel) => {
@@ -2381,20 +2630,58 @@
             const paybackMonths = totals.ftds > 0 ? (totals.spend / totals.ftds) / ((totals.revenue / totals.ftds) / 12) : 0;
             const workingMediaPct = totals.spend > 0 ? (totals.workingMedia / totals.spend) * 100 : 0;
 
-            renderSummary(totals, blendedROAS, paybackMonths, settings);
-            renderCharts(modeledChannels, totals, blendedPlatformROAS, blendedROAS, settings, workingMediaPct);
-            renderTable(modeledChannels, settings);
-            renderStateTable(stateModel.stateRows);
-            renderRecommendations(modeledChannels, totals, blendedROAS, blendedPlatformROAS, paybackMonths, settings, stateModel);
-
-            state.lastResults = {
+            return {
                 settings,
                 channels: modeledChannels,
                 totals,
                 stateRows: stateModel.stateRows,
                 blendedROAS,
                 blendedPlatformROAS,
-                paybackMonths
+                paybackMonths,
+                workingMediaPct,
+                stateMultiplier
+            };
+        }
+
+        function calculate() {
+            const { settings, channels, markets, reallocation } = getInputs();
+            const baseResults = runScenario(settings, channels, markets);
+            const shiftedBudget = applyBudgetShift(channels, reallocation);
+            const shiftedResults = runScenario(settings, shiftedBudget.channels, markets);
+
+            renderSummary(shiftedResults.totals, shiftedResults.blendedROAS, shiftedResults.paybackMonths, settings);
+            renderCharts(
+                shiftedResults.channels,
+                shiftedResults.totals,
+                shiftedResults.blendedPlatformROAS,
+                shiftedResults.blendedROAS,
+                settings,
+                shiftedResults.workingMediaPct
+            );
+            renderTable(shiftedResults.channels, settings);
+            renderStateTable(shiftedResults.stateRows);
+            renderRecommendations(
+                shiftedResults.channels,
+                shiftedResults.totals,
+                shiftedResults.blendedROAS,
+                shiftedResults.blendedPlatformROAS,
+                shiftedResults.paybackMonths,
+                settings,
+                { stateRows: shiftedResults.stateRows, portfolioMultiplier: shiftedResults.stateMultiplier }
+            );
+            renderReallocationSimulator(baseResults, shiftedResults, reallocation, shiftedBudget.appliedShift);
+            renderSaturationCurves(shiftedBudget.channels, settings, shiftedResults.stateMultiplier);
+
+            state.lastResults = {
+                settings,
+                channels: shiftedResults.channels,
+                totals: shiftedResults.totals,
+                stateRows: shiftedResults.stateRows,
+                blendedROAS: shiftedResults.blendedROAS,
+                blendedPlatformROAS: shiftedResults.blendedPlatformROAS,
+                paybackMonths: shiftedResults.paybackMonths,
+                baseBlendedROAS: baseResults.blendedROAS,
+                appliedShift: shiftedBudget.appliedShift
             };
         }
 
@@ -2475,6 +2762,103 @@
             footnote.textContent =
                 `Modeled blended credited ROAS is ${blendedPlatformROAS.toFixed(2)}x versus ${blendedROAS.toFixed(2)}x incremental. ` +
                 `That gap is the reason this tool exists: to translate platform comfort into a more defensible planning story.`;
+        }
+
+        function renderReallocationSimulator(baseResults, shiftedResults, reallocation, appliedShift) {
+            const amountLabel = document.getElementById("shift-amount-label");
+            const appliedLabel = document.getElementById("shift-applied");
+            const deltaLabel = document.getElementById("shift-roas-delta");
+            const summary = document.getElementById("shift-summary");
+            const donor = channelDefinitions.find((channel) => channel.key === reallocation.fromKey);
+            const receiver = channelDefinitions.find((channel) => channel.key === reallocation.toKey);
+            const roasDelta = shiftedResults.blendedROAS - baseResults.blendedROAS;
+            const tone = roasDelta > 0.03 ? "good" : roasDelta < -0.03 ? "risk" : "watch";
+
+            amountLabel.textContent = formatCurrency(reallocation.amount || 0);
+            appliedLabel.textContent = formatCurrency(appliedShift);
+            deltaLabel.textContent = `${roasDelta >= 0 ? "+" : ""}${roasDelta.toFixed(2)}x`;
+            deltaLabel.className = tone;
+
+            if (!donor || !receiver || donor.key === receiver.key || reallocation.amount <= 0) {
+                summary.textContent = "Move dollars between two different channels to compare the current portfolio against a shifted mix in real time.";
+                return;
+            }
+
+            summary.textContent =
+                `Moving ${formatCurrency(appliedShift)} from ${donor.name} to ${receiver.name} shifts blended incremental ROAS from ` +
+                `${baseResults.blendedROAS.toFixed(2)}x to ${shiftedResults.blendedROAS.toFixed(2)}x.`;
+        }
+
+        function buildCurveSvg(points) {
+            const width = 320;
+            const height = 190;
+            const padding = { top: 16, right: 18, bottom: 28, left: 38 };
+            const minSpend = Math.min(...points.map((point) => point.spend));
+            const maxSpend = Math.max(...points.map((point) => point.spend));
+            const minRoas = Math.min(...points.map((point) => point.roas));
+            const maxRoas = Math.max(...points.map((point) => point.roas));
+            const xScale = (value) => padding.left + ((value - minSpend) / Math.max(maxSpend - minSpend, 1)) * (width - padding.left - padding.right);
+            const yScale = (value) => height - padding.bottom - ((value - minRoas) / Math.max(maxRoas - minRoas, 0.1)) * (height - padding.top - padding.bottom);
+
+            const coords = points.map((point) => ({
+                ...point,
+                x: xScale(point.spend),
+                y: yScale(point.roas)
+            }));
+
+            const polyline = coords.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+
+            return `
+                <line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke="rgba(20,53,79,0.18)" stroke-width="1.5"></line>
+                <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" stroke="rgba(20,53,79,0.18)" stroke-width="1.5"></line>
+                <polyline fill="none" stroke="var(--red-500)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="${polyline}"></polyline>
+                ${coords.map((point) => `
+                    <circle cx="${point.x}" cy="${point.y}" r="${point.isCurrent ? 6 : 4.5}" fill="${point.isCurrent ? "var(--navy-800)" : "var(--white)"}" stroke="${point.isCurrent ? "var(--navy-800)" : "var(--red-500)"}" stroke-width="3"></circle>
+                `).join("")}
+                <text x="${padding.left}" y="${padding.top - 2}" fill="var(--slate-600)" font-size="11">${maxRoas.toFixed(1)}x iROAS</text>
+                <text x="${width - padding.right - 42}" y="${height - 8}" fill="var(--slate-600)" font-size="11">${formatCompactCurrency(maxSpend)}</text>
+            `;
+        }
+
+        function buildSaturationSeries(channel, settings, stateMultiplier) {
+            const multipliers = [0.55, 0.75, 1, 1.2, 1.4, 1.65];
+
+            return multipliers.map((multiplier) => {
+                const spend = Math.max(channel.spend * multiplier, 5000);
+                const modeled = modelChannel({ ...channel, spend }, settings);
+                const incrementalROAS = spend > 0 ? (modeled.incrementalRevenue * stateMultiplier) / spend : 0;
+                return {
+                    spend,
+                    roas: incrementalROAS,
+                    isCurrent: multiplier === 1
+                };
+            });
+        }
+
+        function renderSaturationCurves(channels, settings, stateMultiplier) {
+            ["search", "ctv"].forEach((channelKey) => {
+                const channel = channels.find((item) => item.key === channelKey);
+                if (!channel) return;
+
+                const points = buildSaturationSeries(channel, settings, stateMultiplier);
+                const currentPoint = points.find((point) => point.isCurrent) || points[2];
+                const nextPoint = points.find((point) => point.spend > currentPoint.spend) || currentPoint;
+                const svg = document.getElementById(`${channelKey}-curve`);
+                const meta = document.getElementById(`${channelKey}-curve-meta`);
+                const note = document.getElementById(`${channelKey}-curve-note`);
+                const decline = currentPoint.roas - nextPoint.roas;
+
+                svg.innerHTML = buildCurveSvg(points);
+                meta.innerHTML = `
+                    <span>Current spend ${formatCompactCurrency(channel.spend)}</span>
+                    <span>Current iROAS ${currentPoint.roas.toFixed(2)}x</span>
+                    <span>+20% spend ${nextPoint.roas.toFixed(2)}x</span>
+                `;
+                note.textContent =
+                    decline > 0
+                        ? `The modeled curve implies roughly ${decline.toFixed(2)}x of iROAS compression on the next spend step, which is the visible saturation signal.`
+                        : "The next spend step is holding relatively flat, suggesting there is still room before marginal returns bend sharply.";
+            });
         }
 
         function renderTable(modeledChannels, settings) {
@@ -2561,8 +2945,8 @@
             if (settings.agencyFee >= 0.05) {
                 const annualizedLeakage = totals.spend * settings.agencyFee * 52;
                 recommendations.push(
-                    `<strong>Turn the in-housing case into math:</strong> At a ${Math.round(settings.agencyFee * 1000) / 10}% fee rate, this modeled portfolio leaks ` +
-                    `${formatCompactCurrency(annualizedLeakage)} annually before media even works. That is the clearest operating argument for reducing PMG dependence.`
+                    `<strong>Turn the operating model case into math:</strong> At a ${Math.round(settings.agencyFee * 1000) / 10}% fee rate, this modeled portfolio leaks ` +
+                    `${formatCompactCurrency(annualizedLeakage)} annually before media even works. That is the clearest operating argument for reducing outside-agency dependence.`
                 );
             }
 
@@ -2606,7 +2990,7 @@
             );
             narrative.push(
                 `<strong>Strategic implication:</strong> The current scenario is tuned for ${document.getElementById("business-unit").selectedOptions[0].textContent.toLowerCase()} planning, ` +
-                `with FanCash halo set to ${(settings.fanCash * 100).toFixed(0)}%. The bigger the ecosystem advantage gets, the less Fanatics needs to play a pure bidding war against DraftKings and FanDuel.`
+                `with ecosystem halo set to ${(settings.fanCash * 100).toFixed(0)}%. The bigger the owned-audience advantage gets, the less a brand has to win purely through bidding pressure.`
             );
             narrative.push(
                 `<strong>State implication:</strong> State weighting is contributing a ${stateModel.portfolioMultiplier.toFixed(2)}x portfolio multiplier before channel choices are judged, ` +
@@ -2631,7 +3015,7 @@
 
         async function copyExecutiveSummary() {
             const text = [
-                "Fanatics MMM Strategy Cockpit",
+                "Portfolio MMM Strategy Cockpit",
                 "",
                 state.narrativeSummary || "",
                 "",
@@ -2824,6 +3208,7 @@
 
         renderChannelCards();
         renderStateCards();
+        renderReallocationOptions();
         bindInputs();
         applyPreset("current");
     </script>
