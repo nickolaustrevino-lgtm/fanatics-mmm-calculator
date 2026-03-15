@@ -1173,7 +1173,6 @@
             #copy-summary-btn,
             #recalculate-btn,
             #presentation-btn,
-            #csv-btn,
             #pdf-btn,
             #print-btn {
                 display: none !important;
@@ -1357,7 +1356,6 @@
                 <div class="hero-actions">
                     <button class="ghost-btn" id="presentation-btn" type="button">Presentation Mode</button>
                     <button class="ghost-btn" id="pdf-btn" type="button">Export PDF</button>
-                    <button class="ghost-btn" id="csv-btn" type="button">Export CSV</button>
                 </div>
             </div>
             <div class="eyebrow" style="margin-top:16px;">Paid Media Portfolio Planning Tool</div>
@@ -2314,7 +2312,6 @@
             document.getElementById("recalculate-btn").addEventListener("click", calculate);
             document.getElementById("print-btn").addEventListener("click", () => window.print());
             document.getElementById("pdf-btn").addEventListener("click", exportPdf);
-            document.getElementById("csv-btn").addEventListener("click", exportCsv);
             document.getElementById("copy-summary-btn").addEventListener("click", copyExecutiveSummary);
             document.getElementById("presentation-btn").addEventListener("click", togglePresentationMode);
             document.getElementById("normalize-states-btn").addEventListener("click", normalizeStateShares);
@@ -3194,16 +3191,6 @@
                 window.print();
                 window.setTimeout(cleanup, 1200);
             });
-        }
-
-        function exportCsv() {
-            const link = document.createElement("a");
-            link.href = "./fanatics-mmm-media-template.csv";
-            link.download = "fanatics-mmm-media-template.csv";
-            link.rel = "noopener";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
         }
 
         renderChannelCards();
